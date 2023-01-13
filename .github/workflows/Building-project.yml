@@ -18,12 +18,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Setup Stack
-        uses: mstksg/setup-stack@v2    
+      #- name: Setup Stack
+      #  uses: mstksg/setup-stack@v2    
 
-      - name: Update stack
-        run: stack update
+      #- name: Update stack
+      #  run: stack update
 
       # Run command for building project
       - name: Compile project GlaDOS
-        run: stack build
+        run: make
