@@ -22,13 +22,19 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Setup Stack
+        uses: mstksg/setup-stack@v2
+
+      - name: Update stack
+        run: stack update
+
       # Runs test with stack
       - name: Run test haskell with stack
         run: stack test
 
       # Runs a set of commands using the runners shell
-      - name: Path for the hunit test
-        run: cd test
+#      - name: Path for the hunit test
+#        run: cd test
         
       # Run test with HUnit
       - name: HUnit test
