@@ -14,19 +14,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-      - uses: actions/checkout@v3
+      - name: checkout repo
+        uses: actions/checkout@v3
+      
+      # Run command for building project
+      - name: Compile project GlaDOS
+        run: make
+
 
       #- name: Setup Stack
       #  uses: mstksg/setup-stack@v2    
 
       #- name: Update stack
       #  run: stack update
-
-      - name: run in the good place
-        run: cd ../..
-
-      # Run command for building project
-      - name: Compile project GlaDOS
-        run: make
