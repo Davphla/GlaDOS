@@ -24,6 +24,9 @@ jobs:
       #- name: Update stack
       #  run: stack update
 
+      - name: run in the good place
+        run: cd ../..
+
       # Run command for building project
       - name: Compile project GlaDOS
         run: make
