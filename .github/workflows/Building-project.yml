@@ -19,9 +19,16 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v3
       
+      - name: add haskel part
+        uses: haskell/actions/setupv@2
+        with:
+          ghc-version: '8.8.4'
+          enable-stack: true
+          stack-version: 'latest'
+      
       # Run command for building project
       - name: Compile project GlaDOS
-        run: make
+        run: stack build
 
 
       #- name: Setup Stack
