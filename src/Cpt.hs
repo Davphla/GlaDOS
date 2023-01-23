@@ -1,4 +1,4 @@
-module Cpt (Cpt) where
+module Cpt (Cpt (Integer, Symbol, List)) where
 
 import Data.Maybe (fromJust)
 
