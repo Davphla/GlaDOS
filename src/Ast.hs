@@ -1,4 +1,9 @@
-module Ast (Ast, cptToAst) where
+module Ast (
+  Ast (Define, Value, Function, Call, Operator),
+  cptToAst,
+  Operator (Plus, Minus, Times, Div, Mod),
+  ValueType (Number)
+) where
 
 -- import Binding (Binding)
 import Cpt (Cpt (Integer, Symbol, List))
@@ -15,12 +20,12 @@ instance Show Boolean where
 data ValueType
   = Number Int
   | Boolean Bool
-  deriving (Show)
+  deriving (Show, Eq)
 
 type Params = [String]
 
 data Operator = Plus | Minus | Times | Div | Mod
-    deriving Show
+    deriving (Show, Eq)
 
 data Ast
   = Define Name Ast             -- Define a new variable or function
@@ -29,6 +34,14 @@ data Ast
   | Call Name [Ast]             -- Look for name in bindings and pass args if needed
   | Operator Operator [Ast]     -- Basic operators with its parameters
   deriving (Show)
+
+instance Eq Ast where
+  (==) (Value x) (Value y) = x == y
+  (==) (Function pas a) (Function pbs b) = pas == pbs && a == b
+  (==) (Call a pas) (Call b pbs) = pas == pbs && a == b
+  (==) (Operator opa pas) (Operator opb pbs) = pas == pbs && opa == opb
+  (==) (Define x a) (Define y b) = x == y && a == b
+  (==) _ _ = False
 
 
 cptToAst :: Cpt -> Maybe Ast

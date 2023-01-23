@@ -16,6 +16,9 @@ fclean: clean
 debug:
 	@stack repl
 
+func_tests:
+	@./scripts/functional_tests.bash
+
 tests_run:
 	@stack test
 

@@ -2,7 +2,7 @@
 
 BINARY="./glados"
 REF="petite"
-ROOT="$(pwd)/tests/functional/files"
+ROOT="$(pwd)/scripts"
 
 
 display_failure() {
@@ -54,15 +54,18 @@ if [[ ! -z "$BINARY" ]]; then
     make
 fi
 
-SIMPLE="$ROOT/simple"
-NORMAL="$ROOT/normal"
+
+SIMPLE="$ROOT/files/simple"
+NORMAL="$ROOT/files/normal"
 
 SIMPLE_SCORE=0
 SIMPLE_TOTAL=0
 NORMAL_SCORE=0
 NORMAL_TOTAL=0
 
-for f in $SIMPLE/*; do
+echo $SIMPLE
+
+for f in "$SIMPLE"/*; do
     run_test "$f" "simple"
     SIMPLE_SCORE=$(($SIMPLE_SCORE + $?))
     SIMPLE_TOTAL=$(($SIMPLE_TOTAL + 1))

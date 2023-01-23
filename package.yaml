@@ -51,10 +51,13 @@ executables:
 tests:
   glados-test:
     main: Spec.hs
-    source-dirs: tests
+    source-dirs:
+      - tests
+      - tests/cptToAst
     ghc-options:
       - -threaded
       - -rtsopts
       - -with-rtsopts=-N
     dependencies:
       - glados
+      - HUnit
