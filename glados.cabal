@@ -25,9 +25,8 @@ source-repository head
 library
   exposed-modules:
       Ast
-      Binding
       Cpt
-      Lib
+      Literal
   other-modules:
       Paths_glados
   hs-source-dirs:
