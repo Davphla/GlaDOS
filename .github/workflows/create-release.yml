@@ -1,0 +1,29 @@
+name: CD create realese package
+
+on:
+  #workflow_run:
+  #  workflows: ["CI build GlaDOS project"]
+  #  types:
+  #    - completed
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.RELEASE }}
+        with:
+          tag_name: V${{ github.run_number }}
+          release_name: GlaDOS Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
