@@ -1,0 +1,63 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI build GlaDOS project
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches:
+      - main
+      - dev
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build-project:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v3
+      
+      - name: add haskel part
+        uses: haskell/actions/setup@v2
+        with:
+          ghc-version: '8.8.4'
+          enable-stack: true
+          stack-version: 'latest'
+      
+      # Run command for building project
+      - name: Compile project GlaDOS
+        run: stack build
+
+
+      #- name: Setup Stack
+      #  uses: mstksg/setup-stack@v2    
+
+      #- name: Update stack
+      #  run: stack update
+  test:
+    # The type of runner that the job will run on
+    needs: build-project
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      #- name: Setup Stack
+       # uses: mstksg/setup-stack@v2
+
+      - name: Update stack
+        run: stack update
+
+      # Runs test with stack
+      - name: Run test haskell with stack
+        run: stack test --coverage
+        
+      # Run test with HUnit
+      #- name: HUnit test
+      #  run: runTestTT tests
+
+      #Run test functcionel for GlaDOS
+      - name: Run functcionel test
+        run: make func_tests
