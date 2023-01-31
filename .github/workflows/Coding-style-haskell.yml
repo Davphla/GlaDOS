@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: installing pycparser
-        run: python -m pip install pycparser
       - name: installing coding style
-        run: sudo sh -c "$(curl -fsSL https://raw.githubusercontent.com/aureliancnx/Bubulle-Norminette/master/install_bubulle.sh)"
+        run: sudo sh -c "$(curl -fsSL https://intra.epitech.eu/file/Public/technical-documentations/Haskell/lambdananas.tar.gz)"
+      - name: unzip file
+        run: 7z x lambdananas.tar.gz
       - name: check coding style
-        run: bubulle
+        run: ./lambdananas ./src/*hs
 
       
