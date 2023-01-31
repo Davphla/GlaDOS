@@ -11,11 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: installing coding style
-        run: sudo sh -c "$(curl -fsSL https://intra.epitech.eu/file/Public/technical-documentations/Haskell/lambdananas.tar.gz)"
-      - name: unzip file
-        run: 7z x lambdananas.tar.gz
+      #- name: installing coding style
+      #  run: sudo sh -c "$(curl -fsSL https://intra.epitech.eu/file/Public/technical-documentations/Haskell/lambdananas.tar.gz)"
+      #- name: unzip file
+      #  run: 7z x lambdananas.tar.gz
       - name: check coding style
-        run: ./lambdananas ./src/*hs
+        run: ./tests/./lambdananas ./src/*.hs
+
 
       
