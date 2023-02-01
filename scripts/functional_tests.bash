@@ -63,8 +63,6 @@ SIMPLE_TOTAL=0
 NORMAL_SCORE=0
 NORMAL_TOTAL=0
 
-echo $SIMPLE
-
 for f in "$SIMPLE"/*; do
     run_test "$f" "simple"
     SIMPLE_SCORE=$(($SIMPLE_SCORE + $?))

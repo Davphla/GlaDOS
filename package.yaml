@@ -54,6 +54,7 @@ tests:
     source-dirs:
       - tests
       - tests/cptToAst
+      - tests/cpt
     ghc-options:
       - -threaded
       - -rtsopts

@@ -7,7 +7,7 @@
 
 module Cpt (
     Cpt (Literal, Symbol, List),
-    getSymbol
+    getSymbol, getLiteral, getList, printTree
   ) where
 
 import Data.Maybe (fromJust)
@@ -17,6 +17,7 @@ data Cpt
   = Literal Literal
   | Symbol String
   | List [Cpt]
+  deriving (Eq, Show)
 
 getSymbol :: Cpt -> Maybe String
 getSymbol (Symbol s) = Just s

@@ -36,8 +36,8 @@ operatorTestList = TestList [
 
 simpleAdd :: Test
 simpleAdd = TestCase (assertEqual "For Cpt < + 4 5 >"
-    (cptToAst (List [Symbol "+", Literal (Integer 4), Literal (Integer 5)]))
     (Just (Operator Plus [Value (Integer 4), Value (Integer 5)]))
+    (cptToAst (List [Symbol "+", Literal (Integer 4), Literal (Integer 5)]))
   )
 
 simpleMinus :: Test

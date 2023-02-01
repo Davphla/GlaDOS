@@ -55,10 +55,12 @@ test-suite glados-test
   main-is: Spec.hs
   other-modules:
       Operators
+      CptTests
       Paths_glados
   hs-source-dirs:
       tests
       tests/cptToAst
+      tests/cpt
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HUnit
