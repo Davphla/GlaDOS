@@ -2,7 +2,7 @@ module CptTests (cptTestList) where
 
 import Test.HUnit
 
-import Cpt (Cpt (Literal, Symbol, List), getSymbol, getLiteral, getList, printTree)
+import Cpt (Cpt (Literal, Symbol, List), getSymbol, getLiteral, getList)
 import Literal (Literal (Integer, Inexact, Floating, Boolean))
 
 -- -------------------------------------------------------------------------- --
@@ -11,9 +11,8 @@ import Literal (Literal (Integer, Inexact, Floating, Boolean))
 
 cptTestList :: Test
 cptTestList = TestList [ getSymbolSymbol, getSymbolInt, getSymbolList, getLiteralInteger, getLiteralInexact, 
-    getLiteralFloat, getLiteralBool, getLiteralSymbol, getLiteralList, getListList, getListInt, getListSymbol,
-    printTreeInteger, printTreeInexact, printTreeFloating, printTreeBooleanTrue, printTreeBooleanFalse, printTreeSymbol]
-
+    getLiteralFloat, getLiteralBool, getLiteralSymbol, getLiteralList, getListList, getListInt, getListSymbol
+    ]
 -- -------------------------------------------------------------------------- --
 --                               getSymbol Tests                              --
 -- -------------------------------------------------------------------------- --
@@ -96,44 +95,4 @@ getListSymbol :: Test
 getListSymbol = TestCase (assertEqual "For getList symbol"
     Nothing
     (getList (Symbol "a"))
-    )
-
--- -------------------------------------------------------------------------- --
---                               printTree Tests                              --
--- -------------------------------------------------------------------------- --
-
-printTreeInteger :: Test
-printTreeInteger = TestCase (assertEqual "For printTree Integer"
-    (Just "a Number 42")
-    (printTree (Literal (Integer 42)))
-    )
-
-printTreeInexact :: Test
-printTreeInexact = TestCase (assertEqual "For printTree Integer"
-    (Just "a Number 42/69")
-    (printTree (Literal (Inexact 42 69)))
-    )
-
-printTreeFloating :: Test
-printTreeFloating = TestCase (assertEqual "For printTree Integer"
-    (Just "a Number 42.69")
-    (printTree (Literal (Floating 42.69)))
-    )
-
-printTreeBooleanTrue :: Test
-printTreeBooleanTrue = TestCase (assertEqual "For printTree Integer"
-    (Just "a Number #t")
-    (printTree (Literal (Boolean True)))
-    )
-
-printTreeBooleanFalse :: Test
-printTreeBooleanFalse = TestCase (assertEqual "For printTree Integer"
-    (Just "a Number #f")
-    (printTree (Literal (Boolean False)))
-    )
-
-printTreeSymbol :: Test
-printTreeSymbol = TestCase (assertEqual "For printTree Integer"
-    (Just "a Symbol 's'")
-    (printTree (Symbol "s"))
     )

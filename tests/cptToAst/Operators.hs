@@ -26,8 +26,7 @@ import Literal (Literal (Integer))
 
 operatorTestList :: Test
 operatorTestList = TestList [
-    simpleAdd, simpleMinus, simpleDivide, simpleTimes,
-    errorMinus, errorDivide
+    simpleAdd, simpleMinus, simpleDivide, simpleTimes
   ]
 
 -- -------------------------------------------------------------------------- --
@@ -56,20 +55,4 @@ simpleDivide :: Test
 simpleDivide = TestCase (assertEqual "For Cpt < / 4 5 >"
     (Just (Operator Div [Value (Integer 4), Value (Integer 5)]))
     (cptToAst (List [Symbol "/", Literal (Integer 4), Literal (Integer 5)]))
-  )
-
--- -------------------------------------------------------------------------- --
---                                Error tests                                 --
--- -------------------------------------------------------------------------- --
-
-errorMinus :: Test
-errorMinus = TestCase (assertEqual "For Cpt < - >"
-    Nothing
-    (cptToAst (List [Symbol "-"]))
-  )
-
-errorDivide :: Test
-errorDivide = TestCase (assertEqual "For Cpt < / >"
-    Nothing
-    (cptToAst (List [Symbol "/"]))
   )

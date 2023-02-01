@@ -7,10 +7,9 @@
 
 module Cpt (
     Cpt (Literal, Symbol, List),
-    getSymbol, getLiteral, getList, printTree
+    getSymbol, getLiteral, getList
   ) where
 
-import Data.Maybe (fromJust)
 import Literal (Literal)
 
 data Cpt
@@ -30,15 +29,3 @@ getLiteral _ = Nothing
 getList :: Cpt -> Maybe [Cpt]
 getList (List l) = Just l
 getList _ = Nothing
-
-printTree :: Cpt -> Maybe String
-printTree (Literal i) = Just $ "a Number " ++ show i
-printTree (Symbol s) = Just $ "a Symbol '" ++ s ++ "'"
-printTree (List [a]) = Just $ "a List with " ++ fromJust (printTree a)
-printTree (List (a : as)) =
-  Just $ "a List with "
-      ++ fromJust (printTree a)
-      ++ " followed by "
-      ++ concatMap (\x -> fromJust (printTree x) ++ ", ") (init as)
-      ++ fromJust (printTree $ last as)
-printTree _ = Nothing
