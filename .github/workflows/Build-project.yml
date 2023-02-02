@@ -44,9 +44,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Update stack
-        run: stack update
-
       # Runs test with stack
       - name: Run test haskell with stack
         run: stack test --coverage
