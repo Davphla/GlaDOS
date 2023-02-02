@@ -57,3 +57,31 @@ jobs:
         with:
           name: coverage-test-folder
           path: .stack-work/install/x86_64-linux-tinfo6/*
+
+  release:
+    name: Create release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Create release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+         GITHUB_TOKEN: ${{ secrets.RELEASE }}
+        with:
+          tag_name: V${{ github.run_number }}
+          release_name: GlaDOS Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+      - name: Custom release
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: glados-exes.zip
+          asset_name: glados-exes.zip
+          asset_content_type: application/zip
