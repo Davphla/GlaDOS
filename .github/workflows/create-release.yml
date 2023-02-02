@@ -1,14 +1,14 @@
 name: CD create realese package
 
 on:
+  #push:
+  #  branches:
+  #    - main
+  #    - dev
   workflow_run:
     workflows: ["CI build GlaDOS project"]
     types:
       - completed
-  push:
-    branches:
-      - main
-      - dev
 
 jobs:
   release:
