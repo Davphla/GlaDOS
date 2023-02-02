@@ -31,19 +31,10 @@ jobs:
         #run: stack build
         run: make build
 
-      - name: add folder to stock artifacts
-        run: mkdir downloads
-
-      - name: add exectuable to artifacts
-        run:  |
-          cd downloads
-          echo 'glados'  > ./glados
-          cd ..
       - name: Upload artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
-          name: glados-exes
-          path: downloads
+          path: glados
       #- name: copy exe
       #  run: cp $(BINARY_PATH)/bin/glados-exe ./glados
       #- name: Setup Stack
