@@ -59,6 +59,7 @@ jobs:
           path: .stack-work/install/x86_64-linux-tinfo6/*
 
   release:
+    needs: test
     name: Create release
     runs-on: ubuntu-latest
     steps:
