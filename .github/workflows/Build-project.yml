@@ -37,7 +37,7 @@ jobs:
       - name: add exectuable to artifacts
         run:  |
           cd downloads
-          echo 'glados'  > glados
+          echo 'glados'  > ./glados
           cd ..
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
@@ -62,8 +62,8 @@ jobs:
       #- name: Setup Stack
        # uses: mstksg/setup-stack@v2
 
-      - name: Update stack
-        run: stack update
+      #- name: Update stack
+      #  run: stack update
 
       # Runs test with stack
       - name: Run test haskell with stack
