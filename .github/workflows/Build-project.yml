@@ -28,20 +28,14 @@ jobs:
       
       # Run command for building project
       - name: Compile project GlaDOS
-        #run: stack build
         run: make build
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
+          name: glados-exes
           path: glados
-      #- name: copy exe
-      #  run: cp $(BINARY_PATH)/bin/glados-exe ./glados
-      #- name: Setup Stack
-      #  uses: mstksg/setup-stack@v2    
 
-      #- name: Update stack
-      #  run: stack update
   test:
     # The type of runner that the job will run on
     needs: build-project
@@ -50,19 +44,12 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      #- name: Setup Stack
-       # uses: mstksg/setup-stack@v2
-
-      #- name: Update stack
-      #  run: stack update
+      - name: Update stack
+        run: stack update
 
       # Runs test with stack
       - name: Run test haskell with stack
         run: stack test --coverage
-        
-      # Run test with HUnit
-      #- name: HUnit test
-      #  run: runTestTT tests
 
       #Run test functcionel for GlaDOS
       - name: Run functcionel test
