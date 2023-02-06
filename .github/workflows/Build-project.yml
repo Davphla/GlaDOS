@@ -35,6 +35,7 @@ jobs:
         with:
           name: glados-exes
           path: glados
+          run: ls
 
   test:
     # The type of runner that the job will run on
@@ -85,6 +86,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE }}
         with:
+          run: ls
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: .stack-work/install/x86_64-linux-tinfo6/*
           asset_name: coverage.zip
