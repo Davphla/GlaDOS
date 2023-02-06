@@ -99,6 +99,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./.stack-work/install/x86_64-linux-tinfo6/affb732a1df2f664495cea45ecb2a0ec6436312d5a18525de491e4a4c00d0a4f/9.2.5/hpc/index.html
+          asset_path: ./(install_path)/hpc/combined/all/hpc_index.html
           asset_name: coverge.html
           asset_content_type: application/.html
