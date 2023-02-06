@@ -58,7 +58,14 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: coverage-test
-          path: .stack-work/install/x86_64-linux-tinfo6/affb732a1df2f664495cea45ecb2a0ec6436312d5a18525de491e4a4c00d0a4f/9.2.5/hpc/index.html
+          path: .stack-work/install/x86_64-linux-tinfo6/affb732a1df2f664495cea45ecb2a0ec6436312d5a18525de491e4a4c00d0a4f/9.2.5/hpc/*
+      
+      - name: create repo
+        run: mkdir coverage-test
+      
+      - name: copy coverage
+        run: cp .stack-work/install/x86_64-linux-tinfo6/affb732a1df2f664495cea45ecb2a0ec6436312d5a18525de491e4a4c00d0a4f/9.2.5/hpc/* coverage-test
+      
       - name: look repo
         run: ls -la
 
