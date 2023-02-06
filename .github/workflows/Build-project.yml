@@ -149,7 +149,7 @@ jobs:
 ##################################################################################################################
 
       - name: Custom release dev
-        id: upload-release-asset
+        id: upload-release-asset_dev
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE }}
