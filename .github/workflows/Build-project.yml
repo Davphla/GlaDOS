@@ -93,12 +93,14 @@ jobs:
           asset_name: glados-exe.tar.gz
           asset_content_type: application/tar.gz
       
-      - name: test coverage
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./(install_path)/hpc/combined/all/hpc_index.html
-          asset_name: coverge.html
-          asset_content_type: application/.html
+      - name: repo
+        run: ls -la
+      #- name: test coverage
+      #  uses: actions/upload-release-asset@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.RELEASE }}
+      #  with:
+      #    upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #    asset_path: .//hpc/combined/all/hpc_index.html
+      #    asset_name: coverge.html
+      #    asset_content_type: application/.html
