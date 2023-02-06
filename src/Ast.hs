@@ -54,10 +54,17 @@ symbolToOperator _ = Nothing
 symbolToAst :: String -> Maybe Ast
 symbolToAst s = Just (Call s [])
 
+defineToAst :: [Cpt] -> Maybe Ast
+defineToAst [Symbol a, b] = cptToAst b >>= (Just . Define a)
+defineToAst [List (Symbol n:ps), b] = listToParams ps >>=
+    (\params -> cptToAst b >>= (Just . Function params)) >>= (Just . Define n)
+defineToAst _ = Nothing
+
 listToAst :: [Cpt] -> Maybe Ast
-listToAst [Symbol "define", Symbol a, b] = cptToAst b >>= (Just . Define a)
+listToAst (Symbol "define":ps) = defineToAst ps
+    -- cptToAst b >>= (Just . Define a)
 listToAst [Symbol "lambda", List ps, b] = listToParams ps >>= (\params ->
-  cptToAst b >>= ( Just . Function params))
+  cptToAst b >>= (Just . Function params))
 listToAst (Symbol s:ps) = case symbolToOperator s of
   Just op -> listToArgs ps >>= (Just . Operator op)
   _ -> listToArgs ps >>= (Just . Call s)
