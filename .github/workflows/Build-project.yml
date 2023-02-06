@@ -81,25 +81,24 @@ jobs:
           name: glados-exes
 
       - name: Create release dev
-        if: github.ref == 'dev'
+        if: github.ref == 'refs/heads/main'
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE }}
         with:
           tag_name: V.0.${{ github.run_number }}
-          release_name: GlaDOS Release DEV ${{ github.run_number }}
+          release_name: GlaDOS Release MAIN ${{ github.run_number }}
           draft: false
           prerelease: false
 
       - name: Create release main
-        if: github.ref == 'main'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE }}
         with:
           tag_name: V.0.${{ github.run_number }}
-          release_name: GlaDOS Release MAIN ${{ github.run_number }}
+          release_name: GlaDOS Release DEV ${{ github.run_number }}
           draft: false
           prerelease: false
 
