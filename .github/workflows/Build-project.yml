@@ -88,6 +88,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: .stack-work/install/x86_64-linux-tinfo6/*
-          asset_name: coverage.zip
-          asset_content_type: application/zip
+          asset_path: ./glados
+          asset_name: glados-exe
+          #asset_content_type: application/zip
