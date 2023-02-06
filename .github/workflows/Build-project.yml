@@ -89,5 +89,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./glados
-          asset_name: glados-exe
-          #asset_content_type: application/zip
+          asset_name: glados-exe.tar.gz
+          asset_content_type: application/tar.gz
