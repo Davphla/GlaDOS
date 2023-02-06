@@ -80,6 +80,14 @@ jobs:
         with:
           name: glados-exes
 
+
+##################################################################################################################
+#
+#                             release for main part and dev depend of condition
+#
+##################################################################################################################
+
+
       - name: Create release main
         if: github.ref == 'refs/heads/main'
         id: create_release
@@ -103,7 +111,44 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Custom release
+##################################################################################################################
+#
+#                             Custom release for main part
+#
+##################################################################################################################
+
+      - name: Custom release main
+        if: github.ref == 'refs/heads/main'
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./glados
+          asset_name: glados
+          asset_content_type: application/octet-stream
+      
+      #- name: test coverage
+      #  if: github.ref == 'refs/heads/main'
+      #  uses: actions/upload-release-asset@v1
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.RELEASE }}
+      #  with:
+      #    upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #    asset_path:
+      #    asset_name: coverge.html
+      #    asset_content_type: application/.html
+
+
+
+##################################################################################################################
+#
+#                             Custom release for dev part
+#
+##################################################################################################################
+
+      - name: Custom release dev
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
         env:
@@ -111,17 +156,15 @@ jobs:
         with:
           upload_url: ${{ steps.create_release_dev.outputs.upload_url }}
           asset_path: ./glados
-          asset_name: glados-exe.tar.gz
-          asset_content_type: application/tar.gz
+          asset_name: glados
+          asset_content_type: application/octet-stream
       
-      - name: repo
-        run: ls -la
       #- name: test coverage
       #  uses: actions/upload-release-asset@v1
       #  env:
       #    GITHUB_TOKEN: ${{ secrets.RELEASE }}
       #  with:
-      #    upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #    asset_path: .//hpc/combined/all/hpc_index.html
+      #    upload_url: ${{ steps.create_release_dev.outputs.upload_url }}
+      #    asset_path:
       #    asset_name: coverge.html
       #    asset_content_type: application/.html
