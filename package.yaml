@@ -53,7 +53,7 @@ tests:
     main: Spec.hs
     source-dirs:
       - tests
-      - tests/cptToAst
+      - tests/ast
       - tests/cpt
     ghc-options:
       - -threaded

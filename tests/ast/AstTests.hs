@@ -1,4 +1,4 @@
-module AptTests (aptTestList) where
+module AstTests (astTestList) where
 
 import Test.HUnit
 
@@ -8,5 +8,5 @@ import Ast ()
 --                                  Test list                                 --
 -- -------------------------------------------------------------------------- --
 
-aptTestList :: Test
-aptTestList = TestList []
+astTestList :: Test
+astTestList = TestList []

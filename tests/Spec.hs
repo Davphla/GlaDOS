@@ -9,12 +9,12 @@ import Test.HUnit
 
 import System.Exit (exitWith, exitSuccess, ExitCode (ExitFailure))
 
-import Operators (operatorTestList)
+import CptToAst (cptToAstTestList)
 import CptTests (cptTestList)
 
 main :: IO ()
 main = runTestTT ( test [
-    operatorTestList, cptTestList
+    cptToAstTestList, cptTestList
   ]) >>= (\x -> if errors x + failures x == 0
     then  exitSuccess
     else exitWith (ExitFailure 84))
