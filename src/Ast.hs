@@ -18,7 +18,7 @@ type Name = String
 
 type Params = [String]
 
-data Operator = Plus | Minus | Times | Div | Mod
+data Operator = Plus | Minus | Times | Div
     deriving (Show, Eq)
 
 data Ast
@@ -62,7 +62,6 @@ defineToAst _ = Nothing
 
 listToAst :: [Cpt] -> Maybe Ast
 listToAst (Symbol "define":ps) = defineToAst ps
-    -- cptToAst b >>= (Just . Define a)
 listToAst [Symbol "lambda", List ps, b] = listToParams ps >>= (\params ->
   cptToAst b >>= (Just . Function params))
 listToAst (Symbol s:ps) = case symbolToOperator s of

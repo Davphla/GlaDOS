@@ -12,10 +12,14 @@ import System.Exit (exitWith, exitSuccess, ExitCode (ExitFailure))
 import CptToAst (cptToAstTestList)
 import CptTests (cptTestList)
 import Lexer (lexerTestList)
+import EvaluationOperatorTests (operatorTestList)
+import EvaluationTests (evaluationTestList)
+import LiteralTests (literalTestList)
 
 main :: IO ()
 main = runTestTT ( test [
-    cptToAstTestList, operatorTestList, cptTestList, lexerTestList
+    cptToAstTestList, cptTestList, evaluationTestList, operatorTestList, literalTestList,
+    lexerTestList
   ]) >>= (\x -> if errors x + failures x == 0
     then  exitSuccess
     else exitWith (ExitFailure 84))

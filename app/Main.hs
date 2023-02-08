@@ -19,7 +19,7 @@ prompt :: String
 prompt = "> "
 
 launchCmd :: String -> IO ()
-launchCmd "quit" = exitSuccess 
+launchCmd "quit" = exitSuccess
 launchCmd str = putStr prompt >> putStrLn (interpreteInput str)
 
 loop :: IO ()

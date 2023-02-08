@@ -1,5 +1,32 @@
+{-
+-- EPITECH PROJECT, 2023
+-- glados [WSL: Ubuntu-22.04]
+-- File description:
+-- Evaluation.hs
+-}
+
+
 {-# LANGUAGE InstanceSigs #-}
-module Lexer (Parser, runParser, satisfy, pChar, pChars, pSymbol, pWhitespaces, pUInt, pInt, pParenthesis, pPair, pList, pInexact, pBool, pFloat, pLitteral, pAnySymbol, pCpt, pLisp) where
+module Lexer (Parser,
+    runParser,
+    satisfy,
+    pChar,
+    pChars,
+    pSymbol,
+    pWhitespaces,
+    pUInt,
+    pInt,
+    pParenthesis,
+    pPair,
+    pList,
+    pInexact,
+    pBool,
+    pFloat,
+    pLitteral,
+    pAnySymbol,
+    pCpt,
+    pLisp
+  ) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Literal
@@ -53,11 +80,11 @@ instance Alternative Parser where
           Right (output, rest) -> Right (output, rest)
       Right (output, rest) -> Right (output, rest)
 
-      
+
 
 satisfy :: (Char -> Bool) -> Parser Char
 satisfy f = Parser $ \i ->
-  case i of 
+  case i of
     [] -> Left [UnexpectedEnd]
     x:xs
       | f x -> Right (x,xs)
@@ -86,7 +113,7 @@ pParenthesis :: Parser a -> Parser a
 pParenthesis p = pChar '(' *> p <* pChar ')'
 
 pWhitespaces :: Parser ()
-pWhitespaces = void $ some (satisfy (`elem` " \n\t")) 
+pWhitespaces = void $ some (satisfy (`elem` " \n\t"))
 
 pPair :: Parser a -> Parser (a, a)
 pPair p = pParenthesis $ (,) <$> p <*> (pChar ',' *> p)
@@ -110,11 +137,10 @@ pList :: Parser a -> Parser [a]
 pList p = pParenthesis $ (:) <$> p <*> many (pWhitespaces *> p)
 
 pSymbol :: String -> Parser String
-pSymbol = traverse pChar  
+pSymbol = traverse pChar
 
 pCpt :: Parser Cpt
 pCpt = (Literal <$> pLitteral) <|> (Symbol <$> pAnySymbol) <|> (List <$> pList pCpt)
 
 pLisp :: Parser [Cpt]
 pLisp = some (pCpt <* (pWhitespaces <|> pEof)) <* pEof
-

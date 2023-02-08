@@ -27,6 +27,7 @@ library
       Ast
       Cpt
       Lexer
+      Evaluation
       Literal
   other-modules:
       Paths_glados
@@ -59,12 +60,17 @@ test-suite glados-test
       CptToAst
       CptTests
       Lexer
+      EvaluationOperatorTests
+      EvaluationTests
+      LiteralTests
       Paths_glados
   hs-source-dirs:
       tests
       tests/ast
       tests/cpt
       tests/lexer
+      tests/evaluation
+      tests/literal
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HUnit
