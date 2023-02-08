@@ -25,7 +25,7 @@ module Lexer (Parser,
     pLitteral,
     pAnySymbol,
     pCpt,
-    pLisp
+    pLisp,
   ) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
@@ -104,7 +104,7 @@ pChars :: String -> Parser Char
 pChars s = satisfy (`elem` s)
 
 pAnySymbol :: Parser String
-pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
+pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ ['+', '-', '*', '/'])
 
 pUInt :: Parser Int
 pUInt = read <$> some (pChars ['0'..'9'])

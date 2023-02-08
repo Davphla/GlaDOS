@@ -8,6 +8,9 @@
 module Ast (
   Ast (Define, Value, Function, Call, Operator),
   cptToAst,
+  listToParams,
+  listToAst,
+  Params,
   Operator (Plus, Minus, Times, Div),
 ) where
 

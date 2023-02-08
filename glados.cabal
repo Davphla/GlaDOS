@@ -26,8 +26,8 @@ library
   exposed-modules:
       Ast
       Cpt
-      Lexer
       Evaluation
+      Lexer
       Literal
   other-modules:
       Paths_glados
@@ -59,7 +59,7 @@ test-suite glados-test
       AstTests
       CptToAst
       CptTests
-      Lexer
+      LexerTests
       EvaluationOperatorTests
       EvaluationTests
       LiteralTests

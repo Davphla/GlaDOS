@@ -27,7 +27,8 @@ import Literal (Literal (Integer, Inexact, Floating, Boolean))
 cptToAstTestList :: Test
 cptToAstTestList = TestList [
     simpleAdd, simpleMinus, simpleDivide, simpleTimes, simpleSymbol, simpleInteger, 
-    simpleInexact, simpleFloating, simpleBoolean, simpleDefine, defineFunction, defineNothing
+    simpleInexact, simpleFloating, simpleBoolean, simpleDefine, defineFunction, defineNothing,
+    defineLambda, callTest
   ]
 
 -- -------------------------------------------------------------------------- --
@@ -108,4 +109,20 @@ defineNothing :: Test
 defineNothing = TestCase (assertEqual "For Define Nothing"
     Nothing
     (cptToAst (List [Symbol "define"]))  
+  )
+
+defineLambda :: Test
+defineLambda = TestCase (assertEqual "For define lambda + a b"
+    (Just (Define "f" (Function ["a", "b"] (Operator Plus [Call "a" [], Call "b" []]))))
+    (cptToAst (List [Symbol "lambda", List [Symbol "a", Symbol "b"], List [Symbol "+", Symbol "a", Symbol "b"]]))
+  )
+
+-- -------------------------------------------------------------------------- --
+--                                 Call tests                                 --
+-- -------------------------------------------------------------------------- --
+
+callTest :: Test
+callTest = TestCase (assertEqual "For call list [f a]"
+    (Just (Call "f" [Call "a" []]))
+    (cptToAst (List [Symbol "f", Symbol "a"]))
   )
