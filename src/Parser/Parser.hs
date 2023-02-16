@@ -33,14 +33,19 @@ import Literal
 import Cpt
 import Control.Monad (void)
 
-data ParseError = InvalidSynthax
+type Infos = (Int, Int)
+--- line and column
+
+data ParseError infos = InvalidSynthax
   | Unexpected
   | UnexpectedEnd
   deriving (Show, Eq)
 
-newtype Parser a = Parser {
-  runParser :: String ->  Either [ParseError] (a, String)
+newtype FullParser infos a = Parser {
+  runParser :: String ->  Either [ParseError infos] (a, String)
 }
+
+type Parser = FullParser Infos
 
 instance Functor Parser where
   fmap :: (a -> b) -> Parser a -> Parser b
