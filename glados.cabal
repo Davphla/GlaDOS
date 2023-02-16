@@ -27,9 +27,9 @@ library
       Ast
       Cpt
       Evaluation
-      Lexer
       Literal
       Operator
+      Parser.Parser
   other-modules:
       Paths_glados
   hs-source-dirs:

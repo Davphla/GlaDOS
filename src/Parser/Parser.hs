@@ -20,7 +20,6 @@ module Lexer (Parser,
     pParenthesis,
     pPair,
     pList,
-    pInexact,
     pBool,
     pFloat,
     pLitteral,
@@ -119,9 +118,6 @@ pPair p = pParenthesis $ (,) <$> p <*> (pChar ',' *> p)
 
 pInt :: Parser Int
 pInt = (negate <$> (pChar '-' *> pUInt)) <|> pUInt
-
-pInexact :: Parser Int
-pInexact = pInt
 
 pBool :: Parser Bool
 pBool = (True <$ pSymbol "#t") <|> (False <$ pSymbol "#f")
