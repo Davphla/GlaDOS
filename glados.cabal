@@ -30,6 +30,7 @@ library
       Lexer
       Literal
       Operator
+      Parser.Litteral
       Parser.Parser
   other-modules:
       Paths_glados

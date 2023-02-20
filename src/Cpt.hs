@@ -16,6 +16,7 @@ import Operator (Operator)
 
 data Keyword = If | Else | Then | Lambda deriving (Eq)
 instance Show Keyword where
+  show :: Keyword -> String
   show If = "if"
   show Else = "else"
   show Then = "then"

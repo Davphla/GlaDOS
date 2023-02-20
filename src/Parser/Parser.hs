@@ -14,16 +14,15 @@ module Parser.Parser (Parser,
     pChars,
     pSymbol,
     pWhitespaces,
-    pUInt,
-    pInt,
     pParenthesis,
-    pPair,
-    pList,
-    pFloat,
     pAnySymbol,
     pEof,
-    pStrings,
+    pSymbols,
     pComment,
+    pString,
+    sChar,
+    pEncloseByParser,
+    pStrings,
   ) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
@@ -98,7 +97,6 @@ pEof = Parser $ \case
     [] -> Right ((), [])
     _ -> Left [UnexpectedEnd]
 
-
 pChar :: Char -> Parser Char
 pChar h = satisfy (== h)
 
@@ -111,14 +109,14 @@ pChars s = satisfy (`elem` s)
 pString :: String -> Parser String
 pString = traverse pChar
 
+pStrings :: [String] -> Parser String
+pStrings = foldr1 (<|>) . fmap pString 
+
 pWhitespaces :: Parser ()
 pWhitespaces = void $ some (satisfy (`elem` " \n\t"))
 
 pAnySymbol :: Parser String
-pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ ['+', '-', '*', '/'])
-
-pUInt :: Parser Int
-pUInt = read <$> some (pChars ['0'..'9'])
+pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
 
 pParenthesis :: Parser () -> Parser () -> Parser a -> Parser a
 pParenthesis pIn pOut p = pIn *> p <* pOut
@@ -126,23 +124,11 @@ pParenthesis pIn pOut p = pIn *> p <* pOut
 pEncloseByParser :: Parser () -> Parser a -> Parser a
 pEncloseByParser pEnclose  = pParenthesis pEnclose pEnclose
 
-pPair :: Parser a -> Parser (a, a)
-pPair p = pParenthesis (sChar '(') (sChar ')') ((,) <$> p <*> (sChar ',' *> p))
-
-pInt :: Parser Int
-pInt = (negate <$> (sChar '-' *> pUInt)) <|> pUInt
-
-pFloat :: Parser Double
-pFloat = pInt >>= \i -> fromIntegral i <$ sChar '.'
-
-pList :: Parser a -> Parser [a]
-pList p = pParenthesis (sChar '[') (sChar ']') ((:) <$> p <*> many (pWhitespaces *> p)) 
-
 pSymbol :: String -> Parser String
 pSymbol str = pEncloseByParser pWhitespaces (pString str) 
 
-pStrings :: [String] -> Parser String
-pStrings = foldr1 (<|>) . fmap pSymbol 
+pSymbols :: [String] -> Parser String
+pSymbols = foldr1 (<|>) . fmap pSymbol 
 
 pComment :: Parser ()
 pComment = void $ pSymbol "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)
