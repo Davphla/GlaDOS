@@ -14,13 +14,13 @@ module Cpt (
 import Literal (Literal)
 import Operator (Operator)
 
-data Keyword = If | Else | Then | Lambda deriving (Eq)
+data Keyword = If | Else | Then | Lambda deriving (Eq, Read)
 instance Show Keyword where
-  show :: Keyword -> String
   show If = "if"
   show Else = "else"
   show Then = "then"
   show Lambda = "lambda"
+
 
 data Cpt
   = Literal Literal

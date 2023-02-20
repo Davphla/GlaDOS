@@ -1,5 +1,13 @@
 module Parser.Litteral where
-import Parser.Parser ( Parser, pChars, pParenthesis, pSymbol, sChar, pWhitespaces, pString, pEncloseByParser, pAnySymbol )
+import Parser.Parser
+    ( Parser,
+      sChar,
+      pChars,
+      pWhitespaces,
+      pAnySymbol,
+      pParenthesis,
+      pEncloseByParser,
+      pSymbol ) 
 import Control.Applicative ( Alternative((<|>), some, many) )
 
 

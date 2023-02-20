@@ -4,30 +4,31 @@ import Parser.Parser
     ( Parser,
       pEof,
       pWhitespaces,
-      pAnySymbol, pSymbols, pComment, pStrings,
+      pAnySymbol, pSymbols, pComment,
        )
-import Cpt ( Cpt(List, Literal, Identifier, Keyword, Operator) )
+import Cpt ( Cpt(List, Literal, Identifier, Keyword), Keyword (Lambda, Else, Then, If) )
 import Control.Applicative ( Alternative((<|>), some) )
 import Parser.Litteral ( pBool, pInt, pFloat, pList, pLString )
 
-keywords :: [String]
-keywords = ["if", "then", "else", "lambda"]
+keywords :: [Keyword]
+keywords = [If, Then, Else, Lambda]
 
 operator :: [String]
 operator = [".", "+", "-", "*", "/", "`function`", "::", "->", "=", "$"]
 
 pLitteral :: Parser Literal
-pLitteral = (Int <$> pInt) 
-  <|> (Float <$> pFloat) 
-  <|> (Bool <$> pBool) 
-  <|> (String <$> pLString) 
-  <|> (Array <$> pList pLitteral) 
+pLitteral = (Int <$> pInt)
+  <|> (Float <$> pFloat)
+  <|> (Bool <$> pBool)
+  <|> (String <$> pLString)
+  <|> (Array <$> pList pLitteral)
+
 
 pCpt :: Parser Cpt
 pCpt = (Literal <$> pLitteral)
      <|> (Identifier <$> pAnySymbol)
-     <|> (Keyword <$> pSymbols keywords) 
-     <|> (Operator <$> pStrings operator) 
+     <|> (Keyword . read <$> pSymbols (show <$> keywords))
+     -- <|> (Operator . read <$> pStrings operator)
      <|> (List <$> pList pCpt)
 
 startLexer :: Parser [Cpt]

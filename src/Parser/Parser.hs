@@ -8,22 +8,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Parser.Parser (Parser,
-    runParser,
-    satisfy,
-    pChars,
-    pSymbol,
-    pWhitespaces,
-    pParenthesis,
-    pAnySymbol,
-    pEof,
-    pSymbols,
-    pComment,
-    pString,
-    sChar,
-    pEncloseByParser,
-    pStrings,
-  ) where
+module Parser.Parser where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Control.Monad (void)

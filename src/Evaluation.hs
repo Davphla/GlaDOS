@@ -15,6 +15,7 @@ import Operator (Operator (..), OperatorType (Plus, Minus, Times, Div, Mod))
 import Data.Map (Map, insert, lookup)
 import Data.Maybe (fromJust)
 import Prelude hiding (lookup)
+import Operator
 
 
 -- -------------------------------- Bindings -------------------------------- --

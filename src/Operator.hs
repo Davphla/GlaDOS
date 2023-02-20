@@ -7,6 +7,6 @@ data OperatorType
   | Times
   | Div
   | Mod
-  deriving (Show, Eq)
+  deriving (Show, Eq, Read)
 
-data Operator = Operator OperatorType Priority deriving (Eq, Show)
+data Operator = Operator OperatorType Priority deriving (Eq, Show, Read)
