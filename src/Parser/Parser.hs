@@ -8,10 +8,9 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Lexer (Parser,
+module Parser.Parser (Parser,
     runParser,
     satisfy,
-    pChar,
     pChars,
     pSymbol,
     pWhitespaces,
@@ -20,17 +19,14 @@ module Lexer (Parser,
     pParenthesis,
     pPair,
     pList,
-    pBool,
     pFloat,
-    pLitteral,
     pAnySymbol,
-    pCpt,
-    pLisp,
+    pEof,
+    pStrings,
+    pComment,
   ) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
-import Literal
-import Cpt
 import Control.Monad (void)
 
 type Infos = (Int, Int)
@@ -94,6 +90,9 @@ satisfy f = Parser $ \case
       | f x -> Right (x,xs)
       | otherwise -> Left [InvalidSynthax]
 
+skip :: (Char -> Bool) -> Parser ()
+skip f = void $ satisfy f
+
 pEof :: Parser ()
 pEof = Parser $ \case
     [] -> Right ((), [])
@@ -103,8 +102,17 @@ pEof = Parser $ \case
 pChar :: Char -> Parser Char
 pChar h = satisfy (== h)
 
+sChar :: Char -> Parser ()
+sChar h = skip (== h)
+
 pChars :: String -> Parser Char
 pChars s = satisfy (`elem` s)
+
+pString :: String -> Parser String
+pString = traverse pChar
+
+pWhitespaces :: Parser ()
+pWhitespaces = void $ some (satisfy (`elem` " \n\t"))
 
 pAnySymbol :: Parser String
 pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ ['+', '-', '*', '/'])
@@ -112,35 +120,30 @@ pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ ['+', '-',
 pUInt :: Parser Int
 pUInt = read <$> some (pChars ['0'..'9'])
 
-pParenthesis :: Parser a -> Parser a
-pParenthesis p = pChar '(' *> p <* pChar ')'
+pParenthesis :: Parser () -> Parser () -> Parser a -> Parser a
+pParenthesis pIn pOut p = pIn *> p <* pOut
 
-pWhitespaces :: Parser ()
-pWhitespaces = void $ some (satisfy (`elem` " \n\t"))
+pEncloseByParser :: Parser () -> Parser a -> Parser a
+pEncloseByParser pEnclose  = pParenthesis pEnclose pEnclose
 
 pPair :: Parser a -> Parser (a, a)
-pPair p = pParenthesis $ (,) <$> p <*> (pChar ',' *> p)
+pPair p = pParenthesis (sChar '(') (sChar ')') ((,) <$> p <*> (sChar ',' *> p))
 
 pInt :: Parser Int
-pInt = (negate <$> (pChar '-' *> pUInt)) <|> pUInt
-
-pBool :: Parser Bool
-pBool = (True <$ pSymbol "#t") <|> (False <$ pSymbol "#f")
+pInt = (negate <$> (sChar '-' *> pUInt)) <|> pUInt
 
 pFloat :: Parser Double
-pFloat = pInt >>= \i -> fromIntegral i <$ pChar '.'
-
-pLitteral :: Parser Literal
-pLitteral = (Bool <$> pBool) <|> ((Float <$> pFloat) <|> (Int <$> pInt))
+pFloat = pInt >>= \i -> fromIntegral i <$ sChar '.'
 
 pList :: Parser a -> Parser [a]
-pList p = pParenthesis $ (:) <$> p <*> many (pWhitespaces *> p)
+pList p = pParenthesis (sChar '[') (sChar ']') ((:) <$> p <*> many (pWhitespaces *> p)) 
 
 pSymbol :: String -> Parser String
-pSymbol = traverse pChar
+pSymbol str = pEncloseByParser pWhitespaces (pString str) 
 
-pCpt :: Parser Cpt
-pCpt = (Literal <$> pLitteral) <|> (Identifier <$> pAnySymbol) <|> (List <$> pList pCpt)
+pStrings :: [String] -> Parser String
+pStrings = foldr1 (<|>) . fmap pSymbol 
 
-pLisp :: Parser [Cpt]
-pLisp = some (pCpt <* (pWhitespaces <|> pEof)) <* pEof
+pComment :: Parser ()
+pComment = void $ pSymbol "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)
+

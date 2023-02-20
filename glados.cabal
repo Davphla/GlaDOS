@@ -27,6 +27,7 @@ library
       Ast
       Cpt
       Evaluation
+      Lexer
       Literal
       Operator
       Parser.Parser
