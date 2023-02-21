@@ -6,18 +6,24 @@
 -}
 
 module Literal (
-    Literal (Integer, Inexact, Floating, Boolean)
+    Literal (..)
   ) where
 
 data Literal
-  = Integer Int
-  | Inexact Int Int
-  | Floating Double
-  | Boolean Bool
+  = Int Int
+  | Char Char
+  | Float Double
+  | Bool Bool
+  | String [Char]
+  | Array [Literal]
+  | Expression
   deriving Eq
 
 instance Show Literal where
-  show (Integer i) = show i
-  show (Inexact n d) = show n ++ "/" ++ show d
-  show (Floating f) = show f
-  show (Boolean b) = if b then "#t" else "#f"
+  show (Int i) = show i
+  show (Char c) = show c
+  show (Float f) = show f
+  show (Bool b) = if b then "#t" else "#f"
+  show (String cs) = "\"" ++ cs ++ "\""
+  show (Array ls) = show ls
+  show Expression = ""

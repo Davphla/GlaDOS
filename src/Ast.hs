@@ -11,22 +11,20 @@ module Ast (
   listToParams,
   listToAst,
   Params,
-  Operator (Plus, Minus, Times, Div),
 ) where
 
-import Cpt (Cpt (Literal, Symbol, List), getSymbol)
+import Cpt (Cpt (..), Keyword (..), getIdentifier)
 import Literal (Literal)
+import Operator (Operator (..))
 
 type Name = String
 
 type Params = [String]
 
-data Operator = Plus | Minus | Times | Div
-    deriving (Show, Eq)
 
 data Ast
   = Define Name Ast             -- Define a new variable or function
-  | Value Literal           -- Value, either Bool, Int, Fraction or Float
+  | Value Literal               -- Value, either Bool, Int, Fraction or Float
   | Function Params Ast         -- Takes Args and Body
   | Call Name [Ast]             -- Look for name in bindings and pass args if needed
   | Operator Operator [Ast]     -- Basic operators with its parameters
@@ -36,43 +34,48 @@ instance Eq Ast where
   (==) (Value x) (Value y) = x == y
   (==) (Function pas a) (Function pbs b) = pas == pbs && a == b
   (==) (Call a pas) (Call b pbs) = pas == pbs && a == b
-  (==) (Operator opa pas) (Operator opb pbs) = pas == pbs && opa == opb
+  (==) (Ast.Operator opa pas) (Ast.Operator opb pbs) = pas == pbs && opa == opb
   (==) (Define x a) (Define y b) = x == y && a == b
   (==) _ _ = False
 
 
 listToParams :: [Cpt] -> Maybe Params
-listToParams = mapM getSymbol
+listToParams = mapM getIdentifier
 
 listToArgs :: [Cpt] -> Maybe [Ast]
 listToArgs = mapM cptToAst
 
-symbolToOperator :: String -> Maybe Operator
-symbolToOperator "+" = Just Plus
-symbolToOperator "-" = Just Minus
-symbolToOperator "*" = Just Times
-symbolToOperator "/" = Just Div
-symbolToOperator _ = Nothing
+-- symbolToOperator :: String -> Maybe Operator
+-- symbolToOperator "+" = Just (Operator.Operator Plus 1)
+-- symbolToOperator "-" = Just (Operator.Operator Minus 1)
+-- symbolToOperator "*" = Just (Operator.Operator Times 2)
+-- symbolToOperator "/" = Just (Operator.Operator Div 2)
+-- symbolToOperator _ = Nothing
 
 symbolToAst :: String -> Maybe Ast
 symbolToAst s = Just (Call s [])
 
-defineToAst :: [Cpt] -> Maybe Ast
-defineToAst [Symbol a, b] = cptToAst b >>= (Just . Define a)
-defineToAst [List (Symbol n:ps), b] = listToParams ps >>=
-    (\params -> cptToAst b >>= (Just . Function params)) >>= (Just . Define n)
-defineToAst _ = Nothing
+keywordToAst :: Keyword -> Maybe Ast
+keywordToAst _ = Nothing
+
+-- defineToAst :: [Cpt] -> Maybe Ast
+-- defineToAst [Identifier a, b] = cptToAst b >>= (Just . Define a)
+-- defineToAst [List (Identifier n:ps), b] = listToParams ps >>=
+--     (\params -> cptToAst b >>= (Just . Function params)) >>= (Just . Define n)
+-- defineToAst _ = Nothing
 
 listToAst :: [Cpt] -> Maybe Ast
-listToAst (Symbol "define":ps) = defineToAst ps
-listToAst [Symbol "lambda", List ps, b] = listToParams ps >>= (\params ->
+listToAst [Keyword Lambda, List ps, b] = listToParams ps >>= (\params ->
   cptToAst b >>= (Just . Function params))
-listToAst (Symbol s:ps) = case symbolToOperator s of
-  Just op -> listToArgs ps >>= (Just . Operator op)
-  _ -> listToArgs ps >>= (Just . Call s)
-listToAst _ = Nothing
+listToAst (Identifier s:ps) = listToArgs ps >>= (Just . Call s)
+-- listToAst _ = Nothing
+
+operatorToAst :: Operator -> Maybe Ast
+operatorToAst _ = Nothing
 
 cptToAst :: Cpt -> Maybe Ast
 cptToAst (Literal i) = Just (Value i)
-cptToAst (Symbol s) = symbolToAst s
+cptToAst (Identifier s) = symbolToAst s
 cptToAst (List l) = listToAst l
+cptToAst (Keyword k) = keywordToAst k
+cptToAst (Cpt.Operator o) = operatorToAst o

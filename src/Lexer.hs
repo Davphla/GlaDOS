@@ -5,8 +5,9 @@
 -- Evaluation.hs
 -}
 
-
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE LambdaCase #-}
+
 module Lexer (Parser,
     runParser,
     satisfy,
@@ -83,16 +84,14 @@ instance Alternative Parser where
 
 
 satisfy :: (Char -> Bool) -> Parser Char
-satisfy f = Parser $ \i ->
-  case i of
+satisfy f = Parser $ \case
     [] -> Left [UnexpectedEnd]
     x:xs
       | f x -> Right (x,xs)
       | otherwise -> Left [InvalidSynthax]
 
 pEof :: Parser ()
-pEof = Parser $ \i ->
-  case i of
+pEof = Parser $ \case
     [] -> Right ((), [])
     _ -> Left [UnexpectedEnd]
 
@@ -131,7 +130,7 @@ pFloat :: Parser Double
 pFloat = pInt >>= \i -> fromIntegral i <$ pChar '.'
 
 pLitteral :: Parser Literal
-pLitteral = (Boolean <$> pBool) <|> ((Floating <$> pFloat) <|> (Integer <$> pInt))
+pLitteral = (Bool <$> pBool) <|> ((Float <$> pFloat) <|> (Int <$> pInt))
 
 pList :: Parser a -> Parser [a]
 pList p = pParenthesis $ (:) <$> p <*> many (pWhitespaces *> p)
@@ -140,7 +139,7 @@ pSymbol :: String -> Parser String
 pSymbol = traverse pChar
 
 pCpt :: Parser Cpt
-pCpt = (Literal <$> pLitteral) <|> (Symbol <$> pAnySymbol) <|> (List <$> pList pCpt)
+pCpt = (Literal <$> pLitteral) <|> (Identifier <$> pAnySymbol) <|> (List <$> pList pCpt)
 
 pLisp :: Parser [Cpt]
 pLisp = some (pCpt <* (pWhitespaces <|> pEof)) <* pEof
