@@ -19,6 +19,9 @@ data Literal
   | Expression
   deriving Eq
 
+-- TODO : revoir la définition des types pour y ajouter les Listes et Tuples
+-- TODO : réfléchir au format des enums (variables globales ? maintenant ?)
+
 instance Show Literal where
   show (Int i) = show i
   show (Char c) = show c

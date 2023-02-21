@@ -25,7 +25,7 @@ interpreteInput str = case runParser pLisp str of
   Left err -> show err
   Right (cpt, _) -> case (treatCptList cpt empty) of
     Just (Value v) -> show v
-    Just (Function n _) -> "#<procedure " ++ show n ++ ">"
+    Just (Lambda n _) -> "#<procedure " ++ show n ++ ">"
     _ -> "Nothing"
 
 prompt :: String
