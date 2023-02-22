@@ -6,10 +6,11 @@ import Parser.Parser
       pAnySymbol,
       pSymbols,
       Parser(..))
-import Cpt ( Cpt(List, Literal, Identifier, Keyword), Keyword (Lambda, Else, Then, If) )
+import Cpt ( Cpt(List, Literal, Identifier, Keyword, Operator), Keyword (Lambda, Else, Then, If) )
 import Control.Applicative ( Alternative((<|>), some) )
 import Parser.Litteral ( pBool, pInt, pFloat, pList, pLString )
 import Data.Maybe
+import Operator (operatorFromStr)
 
 strToKeywords :: String -> Maybe Keyword
 strToKeywords "if" = Just If
@@ -35,10 +36,9 @@ pLitteral = (Int <$> pInt)
 pCpt :: Parser Cpt
 pCpt = (Literal <$> pLitteral)
      <|> (Keyword . fromJust . strToKeywords <$> pSymbols keywords)
-     -- <|> (Operator . read <$> pStrings operator)
+     <|> (Operator . fromJust . operatorFromStr <$> pSymbols operator)
      <|> (Identifier <$> pAnySymbol)
      <|> (List <$> pList pCpt)
 
 startLexer :: Parser [Cpt]
 startLexer = some (pCpt <* (pWhitespaces <|> pEof)) <* pEof
-

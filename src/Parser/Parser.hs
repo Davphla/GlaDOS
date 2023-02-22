@@ -2,7 +2,7 @@
 -- EPITECH PROJECT, 2023
 -- glados [WSL: Ubuntu-22.04]
 -- File description:
--- Evaluation.hs
+-- Parser.hs
 -}
 
 {-# LANGUAGE InstanceSigs #-}
@@ -95,7 +95,7 @@ pString :: String -> Parser String
 pString = traverse pChar
 
 pStrings :: [String] -> Parser String
-pStrings = foldr1 (<|>) . fmap pString 
+pStrings = foldr1 (<|>) . fmap pString
 
 pWhitespaces :: Parser ()
 pWhitespaces = void $ some (satisfy (`elem` " \n\t"))
@@ -110,11 +110,10 @@ pEncloseByParser :: Parser () -> Parser a -> Parser a
 pEncloseByParser pEnclose  = pParenthesis pEnclose pEnclose
 
 pSymbol :: String -> Parser String
-pSymbol str = pEncloseByParser pWhitespaces (pString str) 
+pSymbol str = pEncloseByParser pWhitespaces (pString str)
 
 pSymbols :: [String] -> Parser String
-pSymbols = foldr1 (<|>) . fmap pSymbol 
+pSymbols = foldr1 (<|>) . fmap pSymbol
 
 pComment :: Parser ()
 pComment = void $ pSymbol "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)
-
