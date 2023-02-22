@@ -14,7 +14,7 @@ module Cpt (
 import Literal (Literal)
 import Operator (Operator)
 
-data Keyword = If | Else | Then | Lambda deriving (Eq, Read)
+data Keyword = If | Else | Then | Lambda deriving (Eq)
 instance Show Keyword where
   show If = "if"
   show Else = "else"

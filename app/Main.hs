@@ -7,6 +7,7 @@
 
 module Main (main) where
 import Lexer (startLexer)
+import Parser.Parser (Parser(..))
 import System.Exit ( exitSuccess )
 import Ast ( Ast (..), cptToAst )
 import Cpt (Cpt)

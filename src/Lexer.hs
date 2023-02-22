@@ -3,16 +3,23 @@ import Literal ( Literal(Int, Bool, Float, String, Array) )
 import Parser.Parser
     (pEof,
       pWhitespaces,
-      pAnySymbol, 
-      pSymbols, 
-      pComment,
-      Parser)
+      pAnySymbol,
+      pSymbols,
+      Parser(..))
 import Cpt ( Cpt(List, Literal, Identifier, Keyword), Keyword (Lambda, Else, Then, If) )
 import Control.Applicative ( Alternative((<|>), some) )
 import Parser.Litteral ( pBool, pInt, pFloat, pList, pLString )
+import Data.Maybe
 
-keywords :: [Keyword]
-keywords = [If, Then, Else, Lambda]
+strToKeywords :: String -> Maybe Keyword
+strToKeywords "if" = Just If
+strToKeywords "then" = Just Then
+strToKeywords "else" = Just Else
+strToKeywords "lambda" = Just Lambda
+strToKeywords _ = Nothing
+
+keywords :: [String]
+keywords = ["if", "then", "else", "lambda"]
 
 operator :: [String]
 operator = [".", "+", "-", "*", "/", "`function`", "::", "->", "=", "$"]
@@ -27,11 +34,11 @@ pLitteral = (Int <$> pInt)
 
 pCpt :: Parser Cpt
 pCpt = (Literal <$> pLitteral)
-     <|> (Identifier <$> pAnySymbol)
-     <|> (Keyword . read <$> pSymbols (show <$> keywords))
+     <|> (Keyword . fromJust . strToKeywords <$> pSymbols keywords)
      -- <|> (Operator . read <$> pStrings operator)
+     <|> (Identifier <$> pAnySymbol)
      <|> (List <$> pList pCpt)
 
 startLexer :: Parser [Cpt]
-startLexer = some (pComment *> pCpt <* (pWhitespaces <|> pEof)) <* pEof
+startLexer = some (pCpt <* (pWhitespaces <|> pEof)) <* pEof
 

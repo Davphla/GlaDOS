@@ -8,7 +8,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Parser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pWhitespaces, pAnySymbol, pParenthesis, pEncloseByParser, pSymbol, pSymbols, pComment) where
+module Parser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pWhitespaces, pAnySymbol, pParenthesis, pEncloseByParser, pSymbol, pSymbols, pComment, runParser) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Control.Monad (void)
