@@ -1,6 +1,6 @@
 module Parser.Litteral where
 import Parser.Parser
-    ( Parser,
+    (FullParser(..),
       sChar,
       pChars,
       pWhitespaces,

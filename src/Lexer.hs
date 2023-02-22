@@ -1,7 +1,7 @@
 module Lexer where
 import Literal ( Literal(Int, Bool, Float, String, Array) )
 import Parser.Parser
-    ( Parser,
+    ( FullParser(..),
       pEof,
       pWhitespaces,
       pAnySymbol, pSymbols, pComment,
