@@ -8,24 +8,24 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Parser.Parser (FullParser(..), satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pWhitespaces, pAnySymbol, pParenthesis, pEncloseByParser, pSymbol, pSymbols, pComment) where
+module Parser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pWhitespaces, pAnySymbol, pParenthesis, pEncloseByParser, pSymbol, pSymbols, pComment) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Control.Monad (void)
 
-type Infos = (Int, Int)
+-- type Infos = (Int, Int)
 --- line and column
 
-data ParseError infos = InvalidSynthax
+data ParseError = InvalidSynthax
   | Unexpected
   | UnexpectedEnd
   deriving (Show, Eq)
 
-newtype FullParser infos a = Parser {
-  runParser :: String ->  Either [ParseError infos] (a, String)
+newtype Parser a = Parser {
+  runParser :: String ->  Either [ParseError] (a, String)
 }
 
-type Parser = FullParser Infos
+-- type Parser = FullParser Infos
 
 instance Functor Parser where
   fmap :: (a -> b) -> Parser a -> Parser b

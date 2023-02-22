@@ -1,11 +1,12 @@
-module Lexer where
+module Lexer (pLitteral, pCpt, startLexer) where
 import Literal ( Literal(Int, Bool, Float, String, Array) )
 import Parser.Parser
-    ( FullParser(..),
-      pEof,
+    (pEof,
       pWhitespaces,
-      pAnySymbol, pSymbols, pComment,
-       )
+      pAnySymbol, 
+      pSymbols, 
+      pComment,
+      Parser)
 import Cpt ( Cpt(List, Literal, Identifier, Keyword), Keyword (Lambda, Else, Then, If) )
 import Control.Applicative ( Alternative((<|>), some) )
 import Parser.Litteral ( pBool, pInt, pFloat, pList, pLString )

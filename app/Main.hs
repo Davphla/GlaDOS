@@ -6,7 +6,7 @@
 -}
 
 module Main (main) where
-import Lexer (pLisp, runParser)
+import Lexer (startLexer)
 import System.Exit ( exitSuccess )
 import Ast ( Ast (..), cptToAst )
 import Cpt (Cpt)
@@ -21,7 +21,7 @@ treatCptList (c:cs) bs = cptToAst c >>= \ast -> (\(a, newBs) ->
   a >>= (\_ -> treatCptList cs newBs)) $ evalAst ast bs
 
 interpreteInput :: String -> String
-interpreteInput str = case runParser pLisp str of
+interpreteInput str = case runParser startLexer str of
   Left err -> show err
   Right (cpt, _) -> case (treatCptList cpt empty) of
     Just (Value v) -> show v
