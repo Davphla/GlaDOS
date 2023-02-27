@@ -2,13 +2,13 @@
 -- EPITECH PROJECT, 2023
 -- glados [WSL: Ubuntu-22.04]
 -- File description:
--- Parser.hs
+-- Evaluation.hs
 -}
 
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module Parser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pWhitespaces, pAnySymbol, pParenthesis, pEncloseByParser, pSymbol, pSymbols, pComment, runParser) where
+module Parser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pAnySymbol, pParenthesis, pEncloseByParser, pSymbol, pSymbols, pComment, runParser, pWhitespace, pManyWhitespace, pSomeWhitespace) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Control.Monad (void)
@@ -95,10 +95,17 @@ pString :: String -> Parser String
 pString = traverse pChar
 
 pStrings :: [String] -> Parser String
-pStrings = foldr1 (<|>) . fmap pString
+pStrings = foldr1 (<|>) . fmap pString 
 
-pWhitespaces :: Parser ()
-pWhitespaces = void $ some (satisfy (`elem` " \n\t"))
+pWhitespace :: Parser ()
+pWhitespace = void $ satisfy (`elem` " \n\t")
+
+pManyWhitespace :: Parser ()
+pManyWhitespace = void $ many pWhitespace
+
+pSomeWhitespace :: Parser ()
+pSomeWhitespace = void $ some pWhitespace
+
 
 pAnySymbol :: Parser String
 pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
@@ -110,10 +117,11 @@ pEncloseByParser :: Parser () -> Parser a -> Parser a
 pEncloseByParser pEnclose  = pParenthesis pEnclose pEnclose
 
 pSymbol :: String -> Parser String
-pSymbol str = pEncloseByParser pWhitespaces (pString str)
+pSymbol str = pEncloseByParser pSomeWhitespace (pString str) 
 
 pSymbols :: [String] -> Parser String
-pSymbols = foldr1 (<|>) . fmap pSymbol
+pSymbols = foldr1 (<|>) . fmap pSymbol 
 
 pComment :: Parser ()
-pComment = void $ pSymbol "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)
+pComment = void $ pString "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)
+

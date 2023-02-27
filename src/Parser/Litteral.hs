@@ -10,11 +10,10 @@ module Parser.Litteral (pBool, pUInt, pInt, pFloat, pPair, pList, pLString) wher
 import Parser.Parser
     (sChar,
       pChars,
-      pWhitespaces,
       pAnySymbol,
       pParenthesis,
       pEncloseByParser,
-      pSymbol, Parser )
+      pSymbol, Parser, pManyWhitespace )
 import Control.Applicative ( Alternative((<|>), some, many) )
 
 
@@ -34,7 +33,7 @@ pPair :: Parser a -> Parser (a, a)
 pPair p = pParenthesis (sChar '(') (sChar ')') ((,) <$> p <*> (sChar ',' *> p))
 
 pList :: Parser a -> Parser [a]
-pList p = pParenthesis (sChar '[') (sChar ']') ((:) <$> p <*> many (pWhitespaces *> p))
+pList p = pParenthesis (sChar '[') (sChar ']') ((:) <$> p <*> many (pManyWhitespace *> p))
 
 pLString :: Parser String
 pLString = pEncloseByParser (sChar '"') pAnySymbol

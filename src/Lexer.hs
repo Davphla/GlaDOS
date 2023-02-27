@@ -2,15 +2,14 @@ module Lexer (pLitteral, pCpt, startLexer) where
 import Literal ( Literal(Int, Bool, Float, String, Array) )
 import Parser.Parser
     (pEof,
-      pWhitespaces,
       pAnySymbol,
-      pSymbols,
-      Parser(..))
+      Parser(..), pStrings, pEncloseByParser, pSomeWhitespace, pManyWhitespace)
 import Cpt ( Cpt(List, Literal, Identifier, Keyword, Operator), Keyword (Lambda, Else, Then, If) )
 import Control.Applicative ( Alternative((<|>), some) )
 import Parser.Litteral ( pBool, pInt, pFloat, pList, pLString )
 import Data.Maybe
 import Operator (operatorFromStr)
+import Control.Monad
 
 strToKeywords :: String -> Maybe Keyword
 strToKeywords "if" = Just If
@@ -32,13 +31,13 @@ pLitteral = (Int <$> pInt)
   <|> (String <$> pLString)
   <|> (Array <$> pList pLitteral)
 
-
 pCpt :: Parser Cpt
-pCpt = (Literal <$> pLitteral)
-     <|> (Keyword . fromJust . strToKeywords <$> pSymbols keywords)
-     <|> (Operator . fromJust . operatorFromStr <$> pSymbols operator)
-     <|> (Identifier <$> pAnySymbol)
-     <|> (List <$> pList pCpt)
+pCpt = (Literal <$> pLitteral) 
+  <|> (Keyword . fromJust . strToKeywords <$> pStrings keywords <* pSomeWhitespace)
+  <|> (Operator . fromJust . operatorFromStr <$> pStrings operator)
+  <|> (Identifier <$> pAnySymbol)
+  <|> (List <$> pList pCpt)
+
 
 startLexer :: Parser [Cpt]
-startLexer = some (pCpt <* (pWhitespaces <|> pEof)) <* pEof
+startLexer = some (pCpt <|> ((pManyWhitespace <|> pEof) *> pCpt)) <* pEof
