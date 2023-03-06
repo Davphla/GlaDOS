@@ -7,20 +7,12 @@
 
 module Cpt.Cpt (
     Cpt (..),
-    Keyword (..),
     getIdentifier, getKeyword, getLiteral, getList, getOperator
   ) where
 
 import Cpt.Literal (Literal)
 import Cpt.Operator (Operator)
-
-data Keyword = If | Else | Then | Lambda deriving (Eq)
-instance Show Keyword where
-  show If = "if"
-  show Else = "else"
-  show Then = "then"
-  show Lambda = "lambda"
-
+import Cpt.Keyword (Keyword)
 
 data Cpt
   = Literal Literal
@@ -28,6 +20,7 @@ data Cpt
   | Keyword Keyword
   | Operator Operator
   | Expression [Cpt]
+module Cpt.LexerParser (pCpt, startLexer, pExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral) where
   | Assignement (String, [Literal], [Cpt])
   | Prototype (String, [Literal])
   deriving (Eq, Show)
