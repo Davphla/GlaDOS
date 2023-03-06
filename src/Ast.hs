@@ -38,12 +38,12 @@ listToParams = mapM getIdentifier
 listToArgs :: [Cpt] -> Maybe [Ast]
 listToArgs = mapM cptToAst
 
--- symbolToOperator :: String -> Maybe Operator
--- symbolToOperator "+" = Just (Operator.Operator Plus 1)
--- symbolToOperator "-" = Just (Operator.Operator Minus 1)
--- symbolToOperator "*" = Just (Operator.Operator Times 2)
--- symbolToOperator "/" = Just (Operator.Operator Div 2)
--- symbolToOperator _ = Nothing
+symbolToOperator :: String -> Maybe Operator
+symbolToOperator "+" = Just (Operator.Operator Plus 1)
+symbolToOperator "-" = Just (Operator.Operator Minus 1)
+symbolToOperator "*" = Just (Operator.Operator Times 2)
+symbolToOperator "/" = Just (Operator.Operator Div 2)
+symbolToOperator _ = Nothing
 
 symbolToAst :: String -> Maybe Ast
 symbolToAst s = Just (Call s [])
@@ -51,17 +51,17 @@ symbolToAst s = Just (Call s [])
 keywordToAst :: Keyword -> Maybe Ast
 keywordToAst _ = Nothing
 
--- defineToAst :: [Cpt] -> Maybe Ast
--- defineToAst [Identifier a, b] = cptToAst b >>= (Just . Define a)
--- defineToAst [List (Identifier n:ps), b] = listToParams ps >>=
---     (\params -> cptToAst b >>= (Just . Function params)) >>= (Just . Define n)
--- defineToAst _ = Nothing
+defineToAst :: [Cpt] -> Maybe Ast
+defineToAst [Identifier a, b] = cptToAst b >>= (Just . Define a)
+defineToAst [List (Identifier n:ps), b] = listToParams ps >>=
+    (\params -> cptToAst b >>= (Just . Function params)) >>= (Just . Define n)
+defineToAst _ = Nothing
 
 listToAst :: [Cpt] -> Maybe Ast
--- listToAst [Keyword Lambda, Cpt.Literal.Expression ps, b] = listToParams ps >>= (\params ->
-  -- cptToAst b >>= (Just . Ast.Lambda params))
+listToAst [Keyword Lambda, Cpt.Literal.Expression ps, b] = listToParams ps >>= (\params ->
+  cptToAst b >>= (Just . Ast.Lambda params))
 listToAst (Identifier s:ps) = listToArgs ps >>= (Just . Call s)
--- listToAst _ = Nothing
+listToAst _ = Nothing
 
 operatorToAst :: Operator -> Maybe Ast
 operatorToAst _ = Nothing
@@ -69,6 +69,6 @@ operatorToAst _ = Nothing
 cptToAst :: Cpt -> Maybe Ast
 cptToAst (Literal i) = Just (Value i)
 cptToAst (Identifier s) = symbolToAst s
--- cptToAst (Expression l) = listToAst l
+cptToAst (Expression l) = listToAst l
 cptToAst (Keyword k) = keywordToAst k
--- cptToAst (Cpt.Operator.Operator o) = operatorToAst o
+cptToAst (Cpt.Operator.Operator o) = operatorToAst o
