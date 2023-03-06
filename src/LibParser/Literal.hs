@@ -5,9 +5,9 @@
 -- Evaluation.hs
 -}
 
-module Parser.Litteral (pBool, pUInt, pInt, pFloat, pPair, pList, pLString) where
+module LibParser.Literal (pBool, pUInt, pInt, pFloat, pPair, pList, pLString, pLiteral) where
 
-import Parser.Parser
+import LibParser.Parser
     (sChar,
       pChars,
       pAnySymbol,
@@ -37,3 +37,10 @@ pList p = pParenthesis (sChar '[') (sChar ']') ((:) <$> p <*> many (pManyWhitesp
 
 pLString :: Parser String
 pLString = pEncloseByParser (sChar '"') pAnySymbol
+
+pLiteral :: Parser Literal
+pLiteral = (Int <$> pInt)
+  <|> (Float <$> pFloat)
+  <|> (Bool <$> pBool)
+  <|> (String <$> pLString)
+  <|> (Array <$> pList pLiteral)

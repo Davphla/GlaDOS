@@ -1,6 +1,6 @@
 {-
 -- EPITECH PROJECT, 2023
--- glados [WSL: Ubuntu-22.04]
+-- glados
 -- File description:
 -- Evaluation.hs
 -}
@@ -10,11 +10,11 @@ module Evaluation (evalAst, Bindings) where
 import Ast (
     Ast (Define, Lambda, Value, Call, Operator)
   )
-import Literal (Literal (Int))
+import Cpt.Literal (Literal (Int))
 import Data.Map (Map, insert, lookup)
 import Data.Maybe (fromJust)
 import Prelude hiding (lookup)
-import Operator
+import Cpt.Operator
 
 
 -- -------------------------------- Bindings -------------------------------- --

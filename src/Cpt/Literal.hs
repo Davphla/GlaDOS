@@ -1,11 +1,11 @@
 {-
 -- EPITECH PROJECT, 2023
--- glados [WSL: Ubuntu-22.04]
+-- glados
 -- File description:
--- Literal.hs
+-- Lieral.hs
 -}
 
-module Literal (
+module Cpt.Literal (
     Literal (..)
   ) where
 

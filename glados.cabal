@@ -25,13 +25,14 @@ source-repository head
 library
   exposed-modules:
       Ast
-      Cpt
+      Cpt.Cpt
+      Cpt.Keyword
+      Cpt.Lexer
+      Cpt.Literal
+      Cpt.Operator
       Evaluation
-      Lexer
-      Literal
-      Operator
-      Parser.Litteral
-      Parser.Parser
+      LibParser.Literal
+      LibParser.Parser
   other-modules:
       Paths_glados
   hs-source-dirs:

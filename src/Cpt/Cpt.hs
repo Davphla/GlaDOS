@@ -1,18 +1,18 @@
 {-
 -- EPITECH PROJECT, 2023
--- glados [WSL: Ubuntu-22.04]
+-- glados
 -- File description:
 -- Cpt.hs
 -}
 
-module Cpt (
+module Cpt.Cpt (
     Cpt (..),
     Keyword (..),
     getIdentifier, getKeyword, getLiteral, getList, getOperator
   ) where
 
-import Literal (Literal)
-import Operator (Operator)
+import Cpt.Literal (Literal)
+import Cpt.Operator (Operator)
 
 data Keyword = If | Else | Then | Lambda deriving (Eq)
 instance Show Keyword where
@@ -27,7 +27,9 @@ data Cpt
   | Identifier String
   | Keyword Keyword
   | Operator Operator
-  | List [Cpt]
+  | Expression [Cpt]
+  | Assignement (String, [Literal], [Cpt])
+  | Prototype (String, [Literal])
   deriving (Eq, Show)
 
 getIdentifier :: Cpt -> Maybe String
@@ -47,7 +49,7 @@ getOperator (Operator o) = Just o
 getOperator _ = Nothing
 
 getList :: Cpt -> Maybe [Cpt]
-getList (List l) = Just l
+getList (Cpt.Expression l) = Just l
 getList _ = Nothing
 
 -- Faire une fonction qui crée l'abre correspondant à une expression en

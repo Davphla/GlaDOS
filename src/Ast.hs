@@ -1,6 +1,6 @@
 {-
 -- EPITECH PROJECT, 2023
--- glados [WSL: Ubuntu-22.04]
+-- glados
 -- File description:
 -- Ast.hs
 -}
@@ -13,9 +13,9 @@ module Ast (
   Params,
 ) where
 
-import Cpt (Cpt (..), Keyword (..), getIdentifier)
-import Literal (Literal)
-import Operator (Operator (..))
+import Cpt.Cpt (Cpt (..), Keyword (..), getIdentifier)
+import Cpt.Literal (Literal)
+import Cpt.Operator (Operator (..))
 
 type Name = String
 

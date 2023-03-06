@@ -1,4 +1,11 @@
-module Operator (Operator (..), OperatorType (..), operatorFromStr) where
+{-
+-- EPITECH PROJECT, 2023
+-- glados
+-- File description:
+-- Operator.hs
+-}
+
+module Cpt.Operator (Operator (..), OperatorType (..), operatorFromStr, operators) where
 
 type Priority = Int
 data OperatorType
@@ -10,6 +17,9 @@ data OperatorType
   deriving (Show, Eq, Read)
 
 data Operator = Operator OperatorType Priority deriving (Eq, Show, Read)
+
+operators :: [String]
+operators = [".", "+", "-", "*", "/", "`function`", "::", "->", "=", "$"]
 
 operatorFromStr :: String -> Maybe Operator
 operatorFromStr "+" = Just $ Operator Plus 10
