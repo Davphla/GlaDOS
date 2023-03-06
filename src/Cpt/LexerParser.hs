@@ -44,7 +44,7 @@ pLambda :: Parser Cpt
 pLambda = pCptKeyword "lambda" *> pExpression
 
 pExpression :: Parser Cpt
-pExpression =  pCondition <|> pParenthesis pExpression <|> pLambda <|> pOperation <|> pCptLiteral
+pExpression =  pCondition <|> pParenthesis pExpression <|> pLambda <|> pOperation <|> pOperand
 
 pPrototype :: Parser Cpt
 pPrototype = Prototype <$> pAnd pAnySymbol (some pLiteral)
