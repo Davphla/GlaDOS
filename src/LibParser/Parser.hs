@@ -8,7 +8,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module LibParser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pAnySymbol, pParenthesis, pEncloseByParser, pSymbol, pSymbols, pComment, runParser, pWhitespace, pManyWhitespace, pSomeWhitespace) where
+module LibParser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pAnySymbol, pEncloseBySpecificParser, pEncloseByParser, pSymbol, pSymbols, pComment, runParser, pWhitespace, pManyWhitespace, pSomeWhitespace, pWhitespaceWithNewLine, pAnd, pAndAnd, pParenthesis) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Control.Monad (void)
@@ -98,7 +98,10 @@ pStrings :: [String] -> Parser String
 pStrings = foldr1 (<|>) . fmap pString 
 
 pWhitespace :: Parser ()
-pWhitespace = void $ satisfy (`elem` " \n\t")
+pWhitespace = void $ satisfy (`elem` " \t")
+
+pWhitespaceWithNewLine :: Parser ()
+pWhitespaceWithNewLine = void $ satisfy (`elem` " \t\n")
 
 pManyWhitespace :: Parser ()
 pManyWhitespace = void $ many pWhitespace
@@ -109,11 +112,14 @@ pSomeWhitespace = void $ some pWhitespace
 pAnySymbol :: Parser String
 pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
 
-pParenthesis :: Parser () -> Parser () -> Parser a -> Parser a
-pParenthesis pIn pOut p = pIn *> p <* pOut
+pParenthesis :: Parser a -> Parser a
+pParenthesis = pEncloseBySpecificParser (void $ pChar '(') (void $ pChar ')') 
+
+pEncloseBySpecificParser :: Parser () -> Parser () -> Parser a -> Parser a
+pEncloseBySpecificParser pIn pOut p = pIn *> p <* pOut
 
 pEncloseByParser :: Parser () -> Parser a -> Parser a
-pEncloseByParser pEnclose  = pParenthesis pEnclose pEnclose
+pEncloseByParser pEnclose  = pEncloseBySpecificParser pEnclose pEnclose
 
 pSymbol :: String -> Parser String
 pSymbol str = pEncloseByParser pSomeWhitespace (pString str) 
@@ -124,3 +130,8 @@ pSymbols = foldr1 (<|>) . fmap pSymbol
 pComment :: Parser ()
 pComment = void $ pString "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)
 
+pAnd :: Parser a -> Parser b -> Parser (a, b)
+pAnd p1 p2 = (,) <$> p1 <*> p2
+
+pAndAnd :: Parser a -> Parser b -> Parser c -> Parser (a, b, c)
+pAndAnd p1 p2 p3 = (,,) <$> p1 <*> p2 <*> p3

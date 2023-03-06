@@ -13,7 +13,7 @@ import LibParser.Parser
       pAnySymbol,
       pParenthesis,
       pEncloseByParser,
-      pSymbol, Parser, pManyWhitespace )
+      pSymbol, Parser, pManyWhitespace, pEncloseBySpecificParser )
 import Control.Applicative ( Alternative((<|>), some, many) )
 import Cpt.Literal ( Literal(Array, Int, Float, Bool, String) )
 
@@ -31,10 +31,10 @@ pFloat :: Parser Double
 pFloat = pInt >>= \i -> fromIntegral i <$ sChar '.'
 
 pPair :: Parser a -> Parser (a, a)
-pPair p = pParenthesis (sChar '(') (sChar ')') ((,) <$> p <*> (sChar ',' *> p))
+pPair p = pParenthesis ((,) <$> p <*> (sChar ',' *> p))
 
 pList :: Parser a -> Parser [a]
-pList p = pParenthesis (sChar '[') (sChar ']') ((:) <$> p <*> many (pManyWhitespace *> p))
+pList p = pEncloseBySpecificParser (sChar '[') (sChar ']') ((:) <$> p <*> many (pManyWhitespace *> p))
 
 pLString :: Parser String
 pLString = pEncloseByParser (sChar '"') pAnySymbol

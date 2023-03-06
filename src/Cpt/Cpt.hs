@@ -20,6 +20,8 @@ data Cpt
   | Keyword Keyword
   | Operator Operator
   | Expression [Cpt]
+  | Condition (Cpt, Cpt, Cpt)
+  | Operation (Cpt, Cpt, Cpt)
   | Assignement (String, [Literal], [Cpt])
   | Prototype (String, [Literal])
   deriving (Eq, Show)
