@@ -9,7 +9,7 @@ module Cpt.LexerParser (pCpt, startLexer, pCptExpression, pPrototype, pAssigneme
 import LibParser.Parser
     (pEof,
       Parser(..), pStrings, pString, pAnySymbol, pWhitespaceWithNewLine, pAndAnd, pParenthesis, pSomeWhitespace, pAnd, pManyWhitespace)
-import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Expression, Condition, Operation, Prototype) )
+import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Expression, Condition, Operation, Prototype, Assignement) )
 import Control.Applicative ( Alternative((<|>), some) )
 import LibParser.Literal ( pList, pLiteral )
 import Data.Maybe ( fromJust )
@@ -38,7 +38,7 @@ pOperand :: Parser Cpt
 pOperand = pCptLiteral <|> pCptIdentifier <|> pCptExpression
 
 pOperation :: Parser Cpt
-pOperation = Operation <$> some (pOperand <|> pCptOperator) <* pManyWhitespace
+pOperation = Operation <$> some ((pOperand <|> pCptOperator) <* pManyWhitespace)
 
 pLambda :: Parser Cpt
 pLambda = pCptKeyword "lambda" *> pExpression
@@ -50,7 +50,7 @@ pPrototype :: Parser Cpt
 pPrototype = Prototype <$> pAnd pAnySymbol (some pLiteral)
 
 pAssignement :: Parser Cpt
-pAssignement = (,) <$> pCptIdentifier <*> pList pOperand >>= pure pExpression
+pAssignement = Assignement <$> pAndAnd pAnySymbol (some pOperand <* pSomeWhitespace) pExpression
 
 pCpt :: Parser Cpt
 pCpt = pAssignement <|> pPrototype <* pWhitespaceWithNewLine

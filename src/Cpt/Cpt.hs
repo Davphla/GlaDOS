@@ -22,7 +22,7 @@ data Cpt
   | Expression [Cpt]
   | Condition (Cpt, Cpt, Cpt)
   | Operation [Cpt]
-  | Assignement (String, [Literal], [Cpt])
+  | Assignement (String, [Cpt], Cpt)
   | Prototype (String, [Literal])
   | Lambda [Cpt]
   deriving (Eq, Show)
