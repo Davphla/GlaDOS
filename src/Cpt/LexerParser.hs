@@ -5,10 +5,10 @@
 -- Lexer.hs
 -}
 
-module Cpt.LexerParser (pCpt, startLexer, pExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral) where
+module Cpt.LexerParser (pCpt, startLexer, pExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral, pCondition) where
 import LibParser.Parser
     (pEof,
-      Parser(..), pStrings, pString, pAnySymbol)
+      Parser(..), pStrings, pString, pAnySymbol, pManyWhitespace)
 import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Expression) )
 import Control.Applicative ( Alternative((<|>), some) )
 import LibParser.Literal ( pList, pLiteral )
@@ -36,8 +36,9 @@ pCondition :: Parser Cpt
 pCondition = pCptKeyword "if" >>= pure pExpression >>= pure (pCptKeyword "then") >>= pure pExpression >>= pure (pCptKeyword "else") >>= pure pExpression
 
 pExpression :: Parser Cpt
-pExpression = pCondition
+pExpression = (pCondition
   <|> pLambda
+  <|> pCptLiteral) <* pManyWhitespace
 
 pOperand :: Parser Cpt
 pOperand = pCptLiteral <|> pCptIdentifier <|> cptExpression
