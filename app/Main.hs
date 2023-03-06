@@ -6,11 +6,11 @@
 -}
 
 module Main (main) where
-import Lexer (startLexer)
-import Parser.Parser (Parser(..))
+import Cpt.LexerParser (startLexer)
+import LibParser.Parser (Parser(..))
 import System.Exit ( exitSuccess )
 import Ast ( Ast (..), cptToAst )
-import Cpt (Cpt)
+import Cpt.Cpt (Cpt)
 import Data.Map (empty)
 import Evaluation (Bindings, evalAst)
 

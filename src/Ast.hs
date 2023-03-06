@@ -13,9 +13,10 @@ module Ast (
   Params,
 ) where
 
-import Cpt.Cpt (Cpt (..), Keyword (..), getIdentifier)
-import Cpt.Literal (Literal)
+import Cpt.Cpt (Cpt (..), getIdentifier)
+import Cpt.Literal (Literal (Expression))
 import Cpt.Operator (Operator (..))
+import Cpt.Keyword
 
 type Name = String
 
@@ -57,8 +58,8 @@ keywordToAst _ = Nothing
 -- defineToAst _ = Nothing
 
 listToAst :: [Cpt] -> Maybe Ast
-listToAst [Keyword Cpt.Lambda, List ps, b] = listToParams ps >>= (\params ->
-  cptToAst b >>= (Just . Ast.Lambda params))
+-- listToAst [Keyword Lambda, Cpt.Literal.Expression ps, b] = listToParams ps >>= (\params ->
+  -- cptToAst b >>= (Just . Ast.Lambda params))
 listToAst (Identifier s:ps) = listToArgs ps >>= (Just . Call s)
 -- listToAst _ = Nothing
 
@@ -68,6 +69,6 @@ operatorToAst _ = Nothing
 cptToAst :: Cpt -> Maybe Ast
 cptToAst (Literal i) = Just (Value i)
 cptToAst (Identifier s) = symbolToAst s
-cptToAst (List l) = listToAst l
+-- cptToAst (Expression l) = listToAst l
 cptToAst (Keyword k) = keywordToAst k
-cptToAst (Cpt.Operator o) = operatorToAst o
+-- cptToAst (Cpt.Operator.Operator o) = operatorToAst o

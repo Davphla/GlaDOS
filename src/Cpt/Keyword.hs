@@ -5,9 +5,17 @@
 -- Keyword.hs
 -}
 
-module Cpt.Keyword (keywords, strToKeywords) where
+module Cpt.Keyword (Keyword, keywords, strToKeywords) where
 
-import Cpt.Cpt ( Keyword(..) )
+
+data Keyword = If | Else | Then | Lambda deriving (Eq)
+instance Show Keyword where
+  show :: Keyword -> String
+  show If = "if"
+  show Else = "else"
+  show Then = "then"
+  show Lambda = "lambda"
+
 
 keywords :: [String]
 keywords = ["if", "then", "else", "lambda"]

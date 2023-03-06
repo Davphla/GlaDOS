@@ -31,12 +31,12 @@ data BuiltinOperator a = BuiltinOperator {
 
 -- ------------------------------- Evaluation ------------------------------- --
 
-getOperator :: Integral a => Operator -> BuiltinOperator a
-getOperator (Operator.Operator Plus _) = BuiltinOperator {function = (+), minArgs = 0, neutral = 0}
-getOperator (Operator.Operator Minus _) = BuiltinOperator {function = (-), minArgs = 1, neutral = 0}
-getOperator (Operator.Operator Times _) = BuiltinOperator {function = (*), minArgs = 0, neutral = 1}
-getOperator (Operator.Operator Div _) = BuiltinOperator {function = div, minArgs = 1, neutral = 1}
-getOperator (Operator.Operator Mod _) = BuiltinOperator {function = mod, minArgs = 1, neutral= 1}
+-- getOperator :: Integral a => Operator -> BuiltinOperator a
+-- getOperator (Operator.Operator Plus _) = BuiltinOperator {function = (+), minArgs = 0, neutral = 0}
+-- getOperator (Operator.Operator Minus _) = BuiltinOperator {function = (-), minArgs = 1, neutral = 0}
+-- getOperator (Operator.Operator Times _) = BuiltinOperator {function = (*), minArgs = 0, neutral = 1}
+-- getOperator (Operator.Operator Div _) = BuiltinOperator {function = div, minArgs = 1, neutral = 1}
+-- getOperator (Operator.Operator Mod _) = BuiltinOperator {function = mod, minArgs = 1, neutral= 1}
 
 getNeutral :: Integral a => BuiltinOperator a -> [Ast] -> Bindings -> Maybe a
 getNeutral op as bs
@@ -78,4 +78,4 @@ evalAst (Define n v) bs = (Nothing, insert n v bs)
 evalAst (Value v) bs = (Just (Value v), bs)
 evalAst (Lambda p a) bs = (Just (Lambda p a), bs)
 evalAst (Call n as) bs = (processCall bs n as, bs)
-evalAst (Ast.Operator op as) bs = (processOperator (getOperator op :: BuiltinOperator Int) as bs >>= \v -> Just (Value (Int v)), bs)
+-- evalAst (Ast.Operator op as) bs = (processOperator (getOperator op :: BuiltinOperator Int) as bs >>= \v -> Just (Value (Int v)), bs)

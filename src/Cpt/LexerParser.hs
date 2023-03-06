@@ -5,10 +5,10 @@
 -- Lexer.hs
 -}
 
-module Cpt.LexerParser (pCpt, startLexer, pExpression, pPrototype, pAssignement, pLambda, cptOperator) where
+module Cpt.LexerParser (pCpt, startLexer, pExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral) where
 import LibParser.Parser
     (pEof,
-      Parser(..), pStrings, pManyWhitespace, pString, pAnySymbol)
+      Parser(..), pStrings, pString, pAnySymbol)
 import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Expression) )
 import Control.Applicative ( Alternative((<|>), some) )
 import LibParser.Literal ( pList, pLiteral )
@@ -16,43 +16,43 @@ import Data.Maybe ( fromJust )
 import Cpt.Keyword ( strToKeywords )
 import Cpt.Operator ( operatorFromStr, operators )
 
-cptKeyword :: String -> Parser Cpt
-cptKeyword str = Keyword . fromJust . strToKeywords <$> pString str
+pCptKeyword :: String -> Parser Cpt
+pCptKeyword str = Keyword . fromJust . strToKeywords <$> pString str
 
-cptOperator :: Parser Cpt
-cptOperator = Operator . fromJust . operatorFromStr <$> pStrings operators
+pCptOperator :: Parser Cpt
+pCptOperator = Operator . fromJust . operatorFromStr <$> pStrings operators
 
-pExpression :: Parser Cpt
-pExpression = pCondition
+pCptLiteral :: Parser Cpt
+pCptLiteral = Literal <$> pLiteral
 
-pCondition :: Parser Cpt
-pCondition = cptKeyword "if" >>= pure pExpression >>= pure (cptKeyword "then") >>= pure pExpression >>= pure (cptKeyword "else") >>= pure pExpression
-
-cptLiteral :: Parser Cpt
-cptLiteral = Literal <$> pLiteral
-
-cptIdentifier :: Parser Cpt
-cptIdentifier = Identifier <$> pAnySymbol
+pCptIdentifier :: Parser Cpt
+pCptIdentifier = Identifier <$> pAnySymbol
 
 cptExpression :: Parser Cpt
 cptExpression = Expression <$> pList pOperand
 
 
+pCondition :: Parser Cpt
+pCondition = pCptKeyword "if" >>= pure pExpression >>= pure (pCptKeyword "then") >>= pure pExpression >>= pure (pCptKeyword "else") >>= pure pExpression
+
+pExpression :: Parser Cpt
+pExpression = pCondition
+  <|> pLambda
+
 pOperand :: Parser Cpt
-pOperand = cptLiteral <|> cptIdentifier <|> cptExpression
+pOperand = pCptLiteral <|> pCptIdentifier <|> cptExpression
 
 pLambda :: Parser Cpt
-pLambda = cptKeyword "lambda" >>= pure pExpression
+pLambda = pCptKeyword "lambda" >>= pure pExpression
 
 pPrototype :: Parser Cpt
-pPrototype = cptIdentifier >>= pure pExpression
+pPrototype = pCptIdentifier >>= pure pExpression
 
 pAssignement :: Parser Cpt
-pAssignement = (,) <$> cptIdentifier <*> pList pOperand >>= pure pExpression
+pAssignement = (,) <$> pCptIdentifier <*> pList pOperand >>= pure pExpression
 
 pCpt :: Parser Cpt
 pCpt = pAssignement <|> pPrototype
-
 
 startLexer :: Parser [Cpt]
 startLexer = some pCpt <* pEof
