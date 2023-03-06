@@ -49,7 +49,7 @@ getOperator (Operator o) = Just o
 getOperator _ = Nothing
 
 getList :: Cpt -> Maybe [Cpt]
-getList (Cpt.Expression l) = Just l
+getList (Expression l) = Just l
 getList _ = Nothing
 
 -- Faire une fonction qui crée l'abre correspondant à une expression en

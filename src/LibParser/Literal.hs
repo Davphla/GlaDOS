@@ -15,6 +15,7 @@ import LibParser.Parser
       pEncloseByParser,
       pSymbol, Parser, pManyWhitespace )
 import Control.Applicative ( Alternative((<|>), some, many) )
+import Cpt.Literal ( Literal(Array, Int, Float, Bool, String) )
 
 
 pBool :: Parser Bool
