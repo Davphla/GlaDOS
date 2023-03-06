@@ -5,7 +5,7 @@
 -- Lexer.hs
 -}
 
-module Cpt.LexerParser (pCpt, startLexer, pCptExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral, pCondition, pOperation, pExpression) where
+module Cpt.LexerParser (pCpt, startLexer, pCptExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral, pCondition, pOperation, pExpression, pCptAnyOperator) where
 import LibParser.Parser
     (pEof,
       Parser(..), pStrings, pString, pAnySymbol, pWhitespaceWithNewLine, pAndAnd, pParenthesis, pSomeWhitespace, pAnd, pManyWhitespace)
@@ -15,12 +15,16 @@ import LibParser.Literal ( pList, pLiteral )
 import Data.Maybe ( fromJust )
 import Cpt.Keyword ( strToKeywords )
 import Cpt.Operator ( operatorFromStr, operators )
+import Control.Monad (void)
 
 pCptKeyword :: String -> Parser Cpt
 pCptKeyword str = Keyword . fromJust . strToKeywords <$> (pString str <* pSomeWhitespace)
 
-pCptOperator :: Parser Cpt
-pCptOperator = Operator . fromJust . operatorFromStr <$> pStrings operators
+pCptOperator :: String -> Parser Cpt
+pCptOperator str = Operator . fromJust . operatorFromStr <$> (pString str <* pManyWhitespace)
+
+pCptAnyOperator :: Parser Cpt
+pCptAnyOperator = Operator . fromJust . operatorFromStr <$> (pStrings operators <* pManyWhitespace)
 
 pCptLiteral :: Parser Cpt
 pCptLiteral = Literal <$> pLiteral
@@ -35,10 +39,10 @@ pCondition :: Parser Cpt
 pCondition = Condition <$> pAndAnd (pCptKeyword "if" *> pExpression) (pCptKeyword "then" *> pExpression) (pCptKeyword "else" *> pExpression)
 
 pOperand :: Parser Cpt
-pOperand = pCptLiteral <|> pCptIdentifier <|> pCptExpression
+pOperand = (pCptLiteral <|> pCptIdentifier <|> pCptExpression) <* pManyWhitespace
 
 pOperation :: Parser Cpt
-pOperation = Operation <$> some ((pOperand <|> pCptOperator) <* pManyWhitespace)
+pOperation = Operation <$> some ((pOperand <|> pParenthesis pExpression <|> pCptAnyOperator) <* pManyWhitespace)
 
 pLambda :: Parser Cpt
 pLambda = pCptKeyword "lambda" *> pExpression
@@ -47,7 +51,7 @@ pExpression :: Parser Cpt
 pExpression =  pCondition <|> pParenthesis pExpression <|> pLambda <|> pOperation <|> pOperand
 
 pPrototype :: Parser Cpt
-pPrototype = Prototype <$> pAnd pAnySymbol (some pLiteral)
+pPrototype = Prototype <$> pAnd (pAnySymbol <* (pManyWhitespace >> pCptOperator "::")) (some (pAnySymbol <* pCptOperator "->"))
 
 pAssignement :: Parser Cpt
 pAssignement = Assignement <$> pAndAnd pAnySymbol (some pOperand <* pSomeWhitespace) pExpression

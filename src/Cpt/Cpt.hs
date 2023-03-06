@@ -14,17 +14,25 @@ import Cpt.Literal (Literal)
 import Cpt.Operator (Operator)
 import Cpt.Keyword (Keyword)
 
+type Identifier = String
+type Expression = [Cpt]
+type Condition = (Cpt, Cpt, Cpt)
+type Operation = [Cpt]
+type Assignement = (String, [Cpt], Cpt)
+type Prototype = (String, [Identifier])
+type Lambda = [Cpt]
+
 data Cpt
   = Literal Literal
   | Identifier String
   | Keyword Keyword
   | Operator Operator
-  | Expression [Cpt]
-  | Condition (Cpt, Cpt, Cpt)
-  | Operation [Cpt]
-  | Assignement (String, [Cpt], Cpt)
-  | Prototype (String, [Literal])
-  | Lambda [Cpt]
+  | Expression Expression
+  | Condition Condition
+  | Operation Operation
+  | Assignement Assignement
+  | Prototype Prototype
+  | Lambda Lambda
   deriving (Eq, Show)
 
 getIdentifier :: Cpt -> Maybe String
