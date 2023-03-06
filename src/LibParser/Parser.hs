@@ -49,7 +49,7 @@ instance Monad Parser where
 
   (>>=) :: Parser a -> (a -> Parser b) -> Parser b
   Parser p >>= k = Parser $ \input -> do
-    (output, rest) <- p input
+    (output, rest) <- p input 
     runParser (k output) rest
 
 instance Alternative Parser where

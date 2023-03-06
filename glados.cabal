@@ -27,7 +27,7 @@ library
       Ast
       Cpt.Cpt
       Cpt.Keyword
-      Cpt.Lexer
+      Cpt.LexerParser
       Cpt.Literal
       Cpt.Operator
       Evaluation
