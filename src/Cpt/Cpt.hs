@@ -21,9 +21,10 @@ data Cpt
   | Operator Operator
   | Expression [Cpt]
   | Condition (Cpt, Cpt, Cpt)
-  | Operation (Cpt, Cpt, Cpt)
+  | Operation [Cpt]
   | Assignement (String, [Literal], [Cpt])
   | Prototype (String, [Literal])
+  | Lambda [Cpt]
   deriving (Eq, Show)
 
 getIdentifier :: Cpt -> Maybe String
