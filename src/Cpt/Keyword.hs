@@ -5,7 +5,7 @@
 -- Keyword.hs
 -}
 
-module Cpt.Keyword (Keyword, keywords, strToKeywords) where
+module Cpt.Keyword (Keyword (..), keywords, strToKeywords) where
 
 
 data Keyword = If | Else | Then | Lambda deriving (Eq)

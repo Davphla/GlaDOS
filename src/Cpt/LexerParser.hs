@@ -2,7 +2,7 @@
 -- EPITECH PROJECT, 2023
 -- glados
 -- File description:
--- Lexer.hs
+-- LexerParser.hs
 -}
 
 module Cpt.LexerParser (pCpt, startLexer, pCptExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral, pCondition, pOperation, pExpression, pCptAnyOperator) where
@@ -15,7 +15,6 @@ import LibParser.Literal ( pList, pLiteral )
 import Data.Maybe ( fromJust )
 import Cpt.Keyword ( strToKeywords )
 import Cpt.Operator ( operatorFromStr, operators )
-import Control.Monad (void)
 
 pCptKeyword :: String -> Parser Cpt
 pCptKeyword str = Keyword . fromJust . strToKeywords <$> (pString str <* pSomeWhitespace)

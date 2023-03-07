@@ -2,7 +2,7 @@
 -- EPITECH PROJECT, 2023
 -- glados [WSL: Ubuntu-22.04]
 -- File description:
--- Evaluation.hs
+-- Parser.hs
 -}
 
 {-# LANGUAGE InstanceSigs #-}
@@ -12,33 +12,30 @@ module LibParser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pStr
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Control.Monad (void)
+import Error (GladosError (Parser), ParseError (..))
 
 -- type Infos = (Int, Int)
 --- line and column
 
-data ParseError = InvalidSynthax
-  | Unexpected
-  | UnexpectedEnd
-  deriving (Show, Eq)
 
 newtype Parser a = Parser {
-  runParser :: String ->  Either [ParseError] (a, String)
+  runParser :: String ->  Either [GladosError] (a, String)
 }
 
 -- type Parser = FullParser Infos
 
 instance Functor Parser where
   fmap :: (a -> b) -> Parser a -> Parser b
-  fmap f (Parser p) = Parser $ \input -> do
+  fmap f (LibParser.Parser.Parser p) = LibParser.Parser.Parser $ \input -> do
     (output, rest) <- p input
     pure (f output, rest)
 
 instance Applicative Parser where
   pure :: a -> Parser a
-  pure a = Parser $ \input -> Right (a, input)
+  pure a = LibParser.Parser.Parser $ \input -> Right (a, input)
 
   (<*>) :: Parser (a -> b) -> Parser a -> Parser b
-  Parser f <*> Parser p = Parser $ \input -> do
+  LibParser.Parser.Parser f <*> LibParser.Parser.Parser p = LibParser.Parser.Parser $ \input -> do
     (f', rest) <- f input
     (output, rest') <- p rest
     pure (f' output, rest')
@@ -48,16 +45,16 @@ instance Monad Parser where
   return = pure
 
   (>>=) :: Parser a -> (a -> Parser b) -> Parser b
-  Parser p >>= k = Parser $ \input -> do
-    (output, rest) <- p input 
+  LibParser.Parser.Parser p >>= k = LibParser.Parser.Parser $ \input -> do
+    (output, rest) <- p input
     runParser (k output) rest
 
 instance Alternative Parser where
   empty :: Parser a
-  empty = Parser $ \_ -> Left [InvalidSynthax]
+  empty = LibParser.Parser.Parser $ \_ -> Left [Error.Parser InvalidSynthax]
 
   (<|>) :: Parser a -> Parser a -> Parser a
-  Parser l <|> Parser r = Parser $ \input ->
+  LibParser.Parser.Parser l <|> LibParser.Parser.Parser r = LibParser.Parser.Parser $ \input ->
     case l input of
       Left err ->
         case r input of
@@ -68,19 +65,19 @@ instance Alternative Parser where
 
 
 satisfy :: (Char -> Bool) -> Parser Char
-satisfy f = Parser $ \case
-    [] -> Left [UnexpectedEnd]
+satisfy f = LibParser.Parser.Parser $ \case
+    [] -> Left [Error.Parser UnexpectedEnd]
     x:xs
       | f x -> Right (x,xs)
-      | otherwise -> Left [InvalidSynthax]
+      | otherwise -> Left [Error.Parser InvalidSynthax]
 
 skip :: (Char -> Bool) -> Parser ()
 skip f = void $ satisfy f
 
 pEof :: Parser ()
-pEof = Parser $ \case
+pEof = LibParser.Parser.Parser $ \case
     [] -> Right ((), [])
-    _ -> Left [UnexpectedEnd]
+    _ -> Left [Error.Parser UnexpectedEnd]
 
 pChar :: Char -> Parser Char
 pChar h = satisfy (== h)
@@ -95,7 +92,7 @@ pString :: String -> Parser String
 pString = traverse pChar
 
 pStrings :: [String] -> Parser String
-pStrings = foldr1 (<|>) . fmap pString 
+pStrings = foldr1 (<|>) . fmap pString
 
 pWhitespace :: Parser ()
 pWhitespace = void $ satisfy (`elem` " \t")
@@ -113,7 +110,7 @@ pAnySymbol :: Parser String
 pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
 
 pParenthesis :: Parser a -> Parser a
-pParenthesis = pEncloseBySpecificParser (void $ pChar '(') (void $ pChar ')') 
+pParenthesis = pEncloseBySpecificParser (void $ pChar '(') (void $ pChar ')')
 
 pEncloseBySpecificParser :: Parser () -> Parser () -> Parser a -> Parser a
 pEncloseBySpecificParser pIn pOut p = pIn *> p <* pOut
@@ -122,10 +119,10 @@ pEncloseByParser :: Parser () -> Parser a -> Parser a
 pEncloseByParser pEnclose  = pEncloseBySpecificParser pEnclose pEnclose
 
 pSymbol :: String -> Parser String
-pSymbol str = pEncloseByParser pSomeWhitespace (pString str) 
+pSymbol str = pEncloseByParser pSomeWhitespace (pString str)
 
 pSymbols :: [String] -> Parser String
-pSymbols = foldr1 (<|>) . fmap pSymbol 
+pSymbols = foldr1 (<|>) . fmap pSymbol
 
 pComment :: Parser ()
 pComment = void $ pString "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)

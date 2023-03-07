@@ -35,7 +35,7 @@ ghc-options:
   - -Wredundant-constraints
 
 library:
-  source-dirs: 
+  source-dirs:
   - src
 
 executables:
@@ -57,7 +57,6 @@ tests:
       - tests/ast
       - tests/cpt
       - tests/lexer
-      - tests/evaluation
       - tests/literal
     ghc-options:
       - -threaded

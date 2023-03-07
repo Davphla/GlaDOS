@@ -2,7 +2,7 @@
 -- EPITECH PROJECT, 2023
 -- glados [WSL: Ubuntu-22.04]
 -- File description:
--- Evaluation.hs
+-- Literal.hs
 -}
 
 module LibParser.Literal (pBool, pUInt, pInt, pFloat, pPair, pList, pLString, pLiteral) where
