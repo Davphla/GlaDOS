@@ -2,7 +2,7 @@ module LiteralTests (literalTestList) where
 
 import Test.HUnit
 
-import Literal (Literal (..))
+import Cpt.Literal (Literal (..))
 
 -- -------------------------------------------------------------------------- --
 --                                  Test list                                 --
@@ -10,38 +10,32 @@ import Literal (Literal (..))
 
 literalTestList :: Test
 literalTestList = TestList [
-    testFloating, testShowTrue, testShowFalse,
-    testShowInteger, testShowInexact
+    testFloat, testShowTrue, testShowFalse,
+    testShowInt
   ]
 
 -- -------------------------------------------------------------------------- --
 
-testFloating :: Test
-testFloating = TestCase (assertEqual "Simple floating point"
+testFloat :: Test
+testFloat = TestCase (assertEqual "Simple Float point"
     "3.14"
-    (show $ Floating 3.14)
+    (show $ Float 3.14)
   )
 
 testShowTrue :: Test
 testShowTrue = TestCase (assertEqual "Show true"
     "#t"
-    (show $ Boolean True)
+    (show $ Bool True)
   )
 
 testShowFalse :: Test
 testShowFalse = TestCase (assertEqual "Show false"
     "#f"
-    (show $ Boolean False)
+    (show $ Bool False)
   )
 
-testShowInexact :: Test
-testShowInexact = TestCase (assertEqual "Show inexact"
-    "1/3"
-    (show $ Inexact 1 3)
-  )
-
-testShowInteger :: Test
-testShowInteger = TestCase (assertEqual "Show integer"
+testShowInt :: Test
+testShowInt = TestCase (assertEqual "Show Int"
     "1"
-    (show $ Integer 1)
+    (show $ Int 1)
   )

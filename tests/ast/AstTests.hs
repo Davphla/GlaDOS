@@ -3,34 +3,35 @@ module AstTests (astTestList) where
 import Test.HUnit
 
 import Ast (
-    listToParams, Params, listToAst
+    listToParams, Params, expressionToAst
     )
-import Cpt (
-    Cpt (Literal, Symbol, List),
+import Cpt.Cpt (
+    Cpt (Literal, Identifier, Operation),
     )
-import Literal (Literal(Integer))
+import Cpt.Literal (Literal(Int))
+import Error (GladosError (Ast), AstError (..))
 
 -- -------------------------------------------------------------------------- --
 --                                  Test list                                 --
 -- -------------------------------------------------------------------------- --
 
 astTestList :: Test
-astTestList = TestList [listToParamsFullSymbols, listToParamsNotFullSymbols, listToAstInteger]
+astTestList = TestList [listToParamsFullIdentifiers, listToParamsNotFullIdentifiers, listToAstInteger]
 
 -- -------------------------------------------------------------------------- --
 --                             listToParams Tests                             --
 -- -------------------------------------------------------------------------- --
 
-listToParamsFullSymbols :: Test
-listToParamsFullSymbols = TestCase (assertEqual "For listToParams [a, b]"
-    (Just ["a", "b"])
-    (listToParams [Symbol "a", Symbol "b"])
+listToParamsFullIdentifiers :: Test
+listToParamsFullIdentifiers = TestCase (assertEqual "For listToParams [a, b]"
+    (Right ["a", "b"])
+    (listToParams [Identifier "a", Identifier "b"])
     )
 
-listToParamsNotFullSymbols :: Test
-listToParamsNotFullSymbols  = TestCase (assertEqual "For listToParams [1, b]"
-    Nothing
-    (listToParams [Literal (Integer 1), Symbol "b"])
+listToParamsNotFullIdentifiers :: Test
+listToParamsNotFullIdentifiers  = TestCase (assertEqual "For listToParams [1, b]"
+    (Left [Ast InvalidAst])
+    (listToParams [Literal (Int 1), Identifier "b"])
     )
 
 -- -------------------------------------------------------------------------- --
@@ -39,6 +40,6 @@ listToParamsNotFullSymbols  = TestCase (assertEqual "For listToParams [1, b]"
 
 listToAstInteger :: Test
 listToAstInteger = TestCase (assertEqual "For listToAst Integer"
-    Nothing
-    (listToAst [Literal (Integer 1), Symbol "b"])
+    (Left [Ast InvalidAst])
+    (expressionToAst [Literal (Int 1), Identifier "b"])
     )

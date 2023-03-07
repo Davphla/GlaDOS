@@ -18,8 +18,8 @@ import LiteralTests (literalTestList)
 
 main :: IO ()
 main = runTestTT ( test [
-    cptToAstTestList, cptTestList, astTestList, evaluationTestList,
-    operatorTestList, literalTestList, lexerTestList
+    cptToAstTestList, cptTestList, astTestList,
+    literalTestList, lexerTestList
   ]) >>= (\x -> if errors x + failures x == 0
     then  exitSuccess
     else exitWith (ExitFailure 84))

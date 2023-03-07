@@ -33,7 +33,6 @@ library
       Error
       LibParser.Literal
       LibParser.Parser
-      Operator
   other-modules:
       Paths_glados
   hs-source-dirs:
