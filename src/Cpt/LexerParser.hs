@@ -9,7 +9,7 @@ module Cpt.LexerParser (pCpt, startLexer, pPrototype, pAssignement, pLambda, pCp
 import LibParser.Parser
     (pEof,
       Parser(..), pStrings, pString, pAnySymbol, pWhitespaceWithNewLine, pAndAnd, pParenthesis, pSomeWhitespace, pAnd, pManyWhitespace)
-import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Condition, Operation, Prototype, Assignement, Expression) )
+import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Condition, Operation, Prototype, Assignement) )
 import Control.Applicative ( Alternative((<|>), some) )
 import LibParser.Literal ( pLiteral )
 import Data.Maybe ( fromJust )
