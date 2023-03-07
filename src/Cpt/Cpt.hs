@@ -6,15 +6,19 @@
 -}
 
 module Cpt.Cpt (
+    Assignement,
     Cpt (..),
+    Condition,
+    Expression,
     Operation,
-    getIdentifier, getKeyword, getLiteral, getList, getOperator
+    Lambda,
+    getIdentifier, getKeyword, getLiteral, getExpression, getOperator
   ) where
 
 import Cpt.Literal (Literal)
 import Cpt.Operator (Operator)
 import Cpt.Keyword (Keyword)
-import Error (GladosError (Cpt), CptError (InvalidCpt))
+import Error (GladosError (Cpt), CptError (InvalidCpt), CptErrorReason (..))
 
 type Identifier = String
 type Expression = [Cpt]
@@ -35,42 +39,42 @@ data Cpt
   | Assignement Assignement
   | Prototype Prototype
   | Lambda Lambda
-  deriving (Eq)
+  deriving (Eq, Show)
 
 
-instance Show Cpt where
-  show (Literal l) = show l
-  show (Identifier s) = s
-  show (Keyword k) = show k
-  show (Operator o) = show o
-  show (Expression (l:ls)) = "Expression " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
-  show (Expression []) = "empty Cpt"
-  show (Condition (a, b, c)) = "if " ++ show a ++ " then " ++ show b ++ " else " ++ show c
-  show (Operation (l:ls)) = "Operation " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
-  show (Operation []) = "empty Cpt"
-  show (Assignement (s, l, c)) = s ++ " " ++ show l ++ " = " ++ show c
-  show (Prototype (s, l)) = s ++ " " ++ show l
-  show (Lambda l) = "lambda " ++ show l
+-- instance Show Cpt where
+--   show (Literal l) = show l
+--   show (Identifier s) = s
+--   show (Keyword k) = show k
+--   show (Operator o) = show o
+--   show (Expression (l:ls)) = "Expression " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
+--   show (Expression []) = "empty Cpt"
+--   show (Condition (a, b, c)) = "if " ++ show a ++ " then " ++ show b ++ " else " ++ show c
+--   show (Operation (l:ls)) = "Operation " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
+--   show (Operation []) = "empty Cpt"
+--   show (Assignement (s, l, c)) = s ++ " " ++ show l ++ " = " ++ show c
+--   show (Prototype (s, l)) = s ++ " " ++ show l
+--   show (Lambda l) = "lambda " ++ show l
 
 getIdentifier :: Cpt -> Either [GladosError] String
 getIdentifier (Identifier s) = Right s
-getIdentifier _ = Left [Cpt InvalidCpt]
+getIdentifier c = Left [Cpt $ InvalidCpt InvalidCptNotIdentifier $ show c]
 
 getLiteral :: Cpt -> Either [GladosError] Literal
 getLiteral (Literal x) = Right x
-getLiteral _ = Left [Cpt InvalidCpt]
+getLiteral c = Left [Cpt $ InvalidCpt InvalidCptNotLiteral $ show c]
 
 getKeyword :: Cpt -> Either [GladosError] Keyword
 getKeyword (Keyword k) = Right k
-getKeyword _ = Left [Cpt InvalidCpt]
+getKeyword c = Left [Cpt $ InvalidCpt InvalidCptNotKeyword $ show c]
 
 getOperator :: Cpt -> Either [GladosError] Operator
 getOperator (Operator o) = Right o
-getOperator _ = Left [Cpt InvalidCpt]
+getOperator c = Left [Cpt $ InvalidCpt InvalidCptNotOperator $ show c]
 
-getList :: Cpt -> Either [GladosError] [Cpt]
-getList (Expression l) = Right l
-getList _ = Left [Cpt InvalidCpt]
+getExpression :: Cpt -> Either [GladosError] [Cpt]
+getExpression (Expression l) = Right l
+getExpression c = Left [Cpt $ InvalidCpt InvalidCptNotExpression $ show c]
 
 -- Faire une fonction qui crée l'abre correspondant à une expression en
 -- ajoutant les priorités.

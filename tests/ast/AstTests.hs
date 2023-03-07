@@ -2,14 +2,14 @@ module AstTests (astTestList) where
 
 import Test.HUnit
 
-import Ast (
+import Ast.Ast (
     listToParams, Params, expressionToAst
     )
 import Cpt.Cpt (
     Cpt (Literal, Identifier, Operation),
     )
 import Cpt.Literal (Literal(Int))
-import Error (GladosError (Ast), AstError (..))
+import Error (GladosError (Ast, Cpt), AstError (..), CptError (..), CptErrorReason (..))
 
 -- -------------------------------------------------------------------------- --
 --                                  Test list                                 --
@@ -30,7 +30,7 @@ listToParamsFullIdentifiers = TestCase (assertEqual "For listToParams [a, b]"
 
 listToParamsNotFullIdentifiers :: Test
 listToParamsNotFullIdentifiers  = TestCase (assertEqual "For listToParams [1, b]"
-    (Left [Ast InvalidAst])
+    (Left [Cpt $ InvalidCpt InvalidCptNotExpression $ show (Literal (Int 1))])
     (listToParams [Literal (Int 1), Identifier "b"])
     )
 
@@ -40,6 +40,6 @@ listToParamsNotFullIdentifiers  = TestCase (assertEqual "For listToParams [1, b]
 
 listToAstInteger :: Test
 listToAstInteger = TestCase (assertEqual "For listToAst Integer"
-    (Left [Ast InvalidAst])
+    (Left [Cpt $ InvalidCpt InvalidCptNotTreatable $ show [Literal (Int 1), Identifier "b"]])
     (expressionToAst [Literal (Int 1), Identifier "b"])
     )

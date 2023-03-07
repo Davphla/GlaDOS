@@ -5,22 +5,82 @@
 -- Error.hs
 -}
 
-module Error (AstError (..), CptError (..), GladosError (..), ParseError (..)) where
+module Error (
+  AstError (..),
+  AstErrorReason (..),
+  CptError (..),
+  CptErrorReason (..),
+  GladosError (..),
+  GlobalWarning (..),
+  ParseError (..)
+  ) where
 
 
-data AstError = InvalidAst | NotImplemented
-  deriving (Eq, Show)
+-- ------------------------------- Ast errors ------------------------------- --
 
-data CptError = InvalidCpt
-  deriving (Eq, Show)
+data AstErrorReason
+  = InvalidAstReason
+  deriving (Eq)
+
+instance Show AstErrorReason where
+  show InvalidAstReason = "this is the reason"
+
+
+data AstError
+  = InvalidAst AstErrorReason String
+  deriving (Eq)
+
+instance Show AstError where
+  show (InvalidAst r s) = "invalid usage of " ++ s ++ ": " ++ show r
+
+
+-- ------------------------------- Cpt errors ------------------------------- --
+
+data CptErrorReason
+  = InvalidCptNotExpression
+  | InvalidCptNotIdentifier
+  | InvalidCptNotLiteral
+  | InvalidCptNotKeyword
+  | InvalidCptNotOperator
+  | InvalidCptNotTreatable
+  deriving (Eq)
+
+instance Show CptErrorReason where
+  show InvalidCptNotExpression = "not an expression"
+  show InvalidCptNotIdentifier = "not an identifier"
+  show InvalidCptNotLiteral = "not a literal"
+  show InvalidCptNotKeyword = "not a keyword"
+  show InvalidCptNotOperator = "not an operator"
+  show InvalidCptNotTreatable = "should be an expression, assignment, prototype or operation"
+
+
+data CptError = InvalidCpt CptErrorReason String
+  deriving (Eq)
+
+instance Show CptError where
+  show (InvalidCpt r s) = "parse error on input: " ++ s ++ ": " ++ show r
+
+
+-- ------------------------------ Parse errors ------------------------------ --
 
 data ParseError = InvalidSynthax
   | Unexpected
   | UnexpectedEnd
   deriving (Eq, Show)
 
+
+-- ------------------------------ Global errors ----------------------------- --
+
+newtype GlobalWarning = NotImplemented String
+  deriving (Eq)
+
+instance Show GlobalWarning where
+  show (NotImplemented s) = "not implemented: " ++ s
+
+
 data GladosError
   = Cpt CptError
   | Ast AstError
   | Parser ParseError
+  | Warning GlobalWarning
   deriving (Eq, Show)

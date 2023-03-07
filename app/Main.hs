@@ -9,7 +9,7 @@ module Main (main) where
 import Cpt.LexerParser (startLexer)
 import LibParser.Parser (Parser(..))
 import System.Exit (exitSuccess)
-import Ast (cptToAst)
+import Ast.Ast (cptToAst)
 
 
 interpreteInput :: String -> String

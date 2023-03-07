@@ -2,9 +2,9 @@ module CptTests (cptTestList) where
 
 import Test.HUnit
 
-import Cpt.Cpt (Cpt (Literal, Identifier, Operation), getIdentifier, getLiteral, getList)
+import Cpt.Cpt (Cpt (Literal, Identifier, Operation), getIdentifier, getLiteral, getExpression)
 import Cpt.Literal (Literal (Int, Float, Bool))
-import Error (GladosError (Cpt), CptError (..))
+import Error (GladosError (Cpt), CptError (..), CptErrorReason (..))
 
 -- -------------------------------------------------------------------------- --
 --                                  Test list                                 --
@@ -13,8 +13,8 @@ import Error (GladosError (Cpt), CptError (..))
 cptTestList :: Test
 cptTestList = TestList [ getIdentifierIdentifier, getIdentifierInt,
     getIdentifierList, getLiteralInt, getLiteralFloat, getLiteralBool,
-    getLiteralIdentifier, getLiteralList, getListList, getListInt,
-    getListIdentifier
+    getLiteralIdentifier, getLiteralList, getExpressionList, getExpressionInt,
+    getExpressionIdentifier
     ]
 -- -------------------------------------------------------------------------- --
 --                               getIdentifier Tests                              --
@@ -28,13 +28,13 @@ getIdentifierIdentifier = TestCase (assertEqual "For getIdentifier \"s\""
 
 getIdentifierInt :: Test
 getIdentifierInt = TestCase (assertEqual "For getIdentifier Literal Int"
-    (Left [Cpt InvalidCpt])
+    (Left [Cpt $ InvalidCpt InvalidCptNotIdentifier $ show (Literal (Int 1))])
     (getIdentifier (Literal (Int 1)))
     )
 
 getIdentifierList :: Test
 getIdentifierList = TestCase (assertEqual "For getIdentifier list"
-    (Left [Cpt InvalidCpt])
+    (Left [Cpt $ InvalidCpt InvalidCptNotIdentifier $ show (Operation [Identifier "s"])])
     (getIdentifier (Operation [Identifier "s"]))
     )
 
@@ -62,34 +62,34 @@ getLiteralBool = TestCase (assertEqual "For getLiteral bool"
 
 getLiteralIdentifier :: Test
 getLiteralIdentifier = TestCase (assertEqual "For getLiteral Identifier"
-    (Left [Cpt InvalidCpt])
+    (Left [Cpt $ InvalidCpt InvalidCptNotLiteral $ show (Identifier "s")])
     (getLiteral (Identifier "s"))
     )
 
 getLiteralList :: Test
 getLiteralList = TestCase (assertEqual "For getLiteral list"
-    (Left [Cpt InvalidCpt])
+    (Left [Cpt $ InvalidCpt InvalidCptNotLiteral $ show (Operation [Identifier "s"])])
     (getLiteral (Operation [Identifier "s"]))
     )
 
 -- -------------------------------------------------------------------------- --
---                                getList Tests                               --
+--                                getExpression Tests                               --
 -- -------------------------------------------------------------------------- --
 
-getListList :: Test
-getListList = TestCase (assertEqual "For getList [\"s\"]"
+getExpressionList :: Test
+getExpressionList = TestCase (assertEqual "For getExpression [\"s\"]"
     (Right [Identifier "s"])
-    (getList (Operation [Identifier "s"]))
+    (getExpression (Operation [Identifier "s"]))
     )
 
-getListInt :: Test
-getListInt = TestCase (assertEqual "For getList 1"
-    (Left [Cpt InvalidCpt])
-    (getList (Literal (Int 1)))
+getExpressionInt :: Test
+getExpressionInt = TestCase (assertEqual "For getExpression 1"
+    (Left [Cpt $ InvalidCpt InvalidCptNotExpression $ show (Literal (Int 1))])
+    (getExpression (Literal (Int 1)))
     )
 
-getListIdentifier :: Test
-getListIdentifier = TestCase (assertEqual "For getList Identifier"
-    (Left [Cpt InvalidCpt])
-    (getList (Identifier "a"))
+getExpressionIdentifier :: Test
+getExpressionIdentifier = TestCase (assertEqual "For getExpression Identifier"
+    (Left [Cpt $ InvalidCpt InvalidCptNotExpression $ show (Identifier "a")])
+    (getExpression (Identifier "a"))
     )
