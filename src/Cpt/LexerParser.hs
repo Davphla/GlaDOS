@@ -37,7 +37,7 @@ pExpression :: Parser Cpt
 pExpression = pKeywordExpression <|> pOperation
 
 pPrototype :: Parser Cpt
-pPrototype = Prototype <$> pAnd (pIdentifier <* (pManyWhitespace >> pCptOperator "::")) (some (pIdentifier <* pCptOperator "->" <|> pIdentifier))
+pPrototype = Prototype <$> pAnd (pIdentifier <* (pManyWhitespace >> pCptOperator "::")) (some (((pIdentifier <* pManyWhitespace <* pCptOperator "->") <|> pIdentifier) <* pManyWhitespace))
 
 pAssignement :: Parser Cpt
 pAssignement = Assignement <$> pAndAnd (pIdentifier <* pManyWhitespace) (many pParameter <|> pure []) (sChar '=' >> pManyWhitespace *> pExpression)
