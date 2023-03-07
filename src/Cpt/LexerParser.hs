@@ -5,13 +5,13 @@
 -- LexerParser.hs
 -}
 
-module Cpt.LexerParser (pCpt, startLexer, pCptExpression, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral, pCondition, pOperation, pExpression, pCptAnyOperator) where
+module Cpt.LexerParser (pCpt, startLexer, pPrototype, pAssignement, pLambda, pCptOperator, pCptKeyword, pCptLiteral, pCondition, pOperation, pExpression, pCptAnyOperator) where
 import LibParser.Parser
     (pEof,
       Parser(..), pStrings, pString, pAnySymbol, pWhitespaceWithNewLine, pAndAnd, pParenthesis, pSomeWhitespace, pAnd, pManyWhitespace)
-import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Expression, Condition, Operation, Prototype, Assignement) )
+import Cpt.Cpt ( Cpt(Literal, Identifier, Operator, Keyword, Condition, Operation, Prototype, Assignement, Expression) )
 import Control.Applicative ( Alternative((<|>), some) )
-import LibParser.Literal ( pList, pLiteral )
+import LibParser.Literal ( pLiteral )
 import Data.Maybe ( fromJust )
 import Cpt.Keyword ( strToKeywords )
 import Cpt.Operator ( operatorFromStr, operators )
@@ -31,23 +31,20 @@ pCptLiteral = Literal <$> pLiteral
 pCptIdentifier :: Parser Cpt
 pCptIdentifier = Identifier <$> pAnySymbol
 
-pCptExpression :: Parser Cpt
-pCptExpression = Expression <$> pList pOperand
-
 pCondition :: Parser Cpt
-pCondition = Condition <$> pAndAnd (pCptKeyword "if" *> pExpression) (pCptKeyword "then" *> pExpression) (pCptKeyword "else" *> pExpression)
+pCondition = Condition <$> pAndAnd (pCptKeyword "if" *> pOperand) (pCptKeyword "then" *> pOperand) (pCptKeyword "else" *> pOperand)
 
 pOperand :: Parser Cpt
-pOperand = (pCptLiteral <|> pCptIdentifier <|> pCptExpression) <* pManyWhitespace
+pOperand = (pCptLiteral <|> pCptIdentifier <|> pParenthesis pExpression) <* pManyWhitespace
 
 pOperation :: Parser Cpt
-pOperation = Operation <$> some ((pOperand <|> pParenthesis pExpression <|> pCptAnyOperator) <* pManyWhitespace)
+pOperation = Operation <$> some ((pOperand <|> pCptAnyOperator) <* pManyWhitespace)
 
 pLambda :: Parser Cpt
 pLambda = pCptKeyword "lambda" *> pExpression
 
 pExpression :: Parser Cpt
-pExpression =  pCondition <|> pParenthesis pExpression <|> pLambda <|> pOperation <|> pOperand
+pExpression = pCondition <|> pLambda <|> pOperation <|> pOperand
 
 pPrototype :: Parser Cpt
 pPrototype = Prototype <$> pAnd (pAnySymbol <* (pManyWhitespace >> pCptOperator "::")) (some (pAnySymbol <* pCptOperator "->"))

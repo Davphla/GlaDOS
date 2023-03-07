@@ -34,27 +34,27 @@ data Cpt
   | Keyword Keyword
   | Operator Operator
   | Expression Expression
+  | Operation Expression
   | Condition Condition
-  | Operation Operation
   | Assignement Assignement
   | Prototype Prototype
   | Lambda Lambda
-  deriving (Eq, Show)
+  deriving (Eq)
 
 
--- instance Show Cpt where
---   show (Literal l) = show l
---   show (Identifier s) = s
---   show (Keyword k) = show k
---   show (Operator o) = show o
---   show (Expression (l:ls)) = "Expression " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
---   show (Expression []) = "empty Cpt"
---   show (Condition (a, b, c)) = "if " ++ show a ++ " then " ++ show b ++ " else " ++ show c
---   show (Operation (l:ls)) = "Operation " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
---   show (Operation []) = "empty Cpt"
---   show (Assignement (s, l, c)) = s ++ " " ++ show l ++ " = " ++ show c
---   show (Prototype (s, l)) = s ++ " " ++ show l
---   show (Lambda l) = "lambda " ++ show l
+instance Show Cpt where
+  show (Literal l) = show l
+  show (Identifier s) = s
+  show (Keyword k) = show k
+  show (Operator o) = show o
+  show (Expression (l:ls)) = "Expression " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
+  show (Expression []) = "empty Cpt"
+  show (Operation (l:ls)) = "Operation " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
+  show (Operation []) = "empty Cpt"
+  show (Condition (a, b, c)) = "{if} " ++ show a ++ " {then} " ++ show b ++ " {else} " ++ show c
+  show (Assignement (s, l, c)) = s ++ " " ++ show l ++ " = " ++ show c
+  show (Prototype (s, l)) = s ++ " " ++ show l
+  show (Lambda l) = "lambda " ++ show l
 
 getIdentifier :: Cpt -> Either [GladosError] String
 getIdentifier (Identifier s) = Right s
