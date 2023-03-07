@@ -12,20 +12,23 @@ module Cpt.Cpt (
     Expression,
     Operation,
     Lambda,
-    getIdentifier, getKeyword, getLiteral, getExpression, getOperator
+    getIdentifier, getKeyword, getLiteral, getExpression, getOperator, pCptKeyword, pCptOperator, pCptAnyOperator, pCptLiteral, Identifier
   ) where
 
 import Cpt.Literal (Literal)
-import Cpt.Operator (Operator)
-import Cpt.Keyword (Keyword)
+import Cpt.Operator (Operator, operatorFromStr, operators)
+import Cpt.Keyword (Keyword, strToKeywords)
 import Error (GladosError (Cpt), CptError (InvalidCpt), CptErrorReason (..))
+import LibParser.Parser
+import Data.Maybe
+import LibParser.Literal
 
 type Identifier = String
 type Expression = [Cpt]
 type Condition = (Cpt, Cpt, Cpt)
 type Operation = [Cpt]
-type Assignement = (String, [Cpt], Cpt)
-type Prototype = (String, [Identifier])
+type Assignement = (Identifier, [Cpt], Cpt)
+type Prototype = (Identifier, [Identifier])
 type Lambda = [Cpt]
 
 data Cpt
@@ -52,8 +55,8 @@ instance Show Cpt where
   show (Operation (l:ls)) = "Operation " ++ foldl (\x acc -> x ++ " " ++ acc) (show l) (map show ls)
   show (Operation []) = "empty Cpt"
   show (Condition (a, b, c)) = "{if} " ++ show a ++ " {then} " ++ show b ++ " {else} " ++ show c
-  show (Assignement (s, l, c)) = s ++ " " ++ show l ++ " = " ++ show c
-  show (Prototype (s, l)) = s ++ " " ++ show l
+  show (Assignement (s, l, c)) = show s ++ " " ++ show l ++ " = " ++ show c
+  show (Prototype (s, l)) = show s ++ " " ++ show l
   show (Lambda l) = "lambda " ++ show l
 
 getIdentifier :: Cpt -> Either [GladosError] String
@@ -75,6 +78,19 @@ getOperator c = Left [Cpt $ InvalidCpt InvalidCptNotOperator $ show c]
 getExpression :: Cpt -> Either [GladosError] [Cpt]
 getExpression (Expression l) = Right l
 getExpression c = Left [Cpt $ InvalidCpt InvalidCptNotExpression $ show c]
+
+
+pCptKeyword :: String -> Parser Cpt
+pCptKeyword str = Keyword . fromJust . strToKeywords <$> (pString str <* pSomeWhitespace)
+
+pCptOperator :: String -> Parser Cpt
+pCptOperator str = Operator . fromJust . operatorFromStr <$> (pString str <* pManyWhitespace)
+
+pCptAnyOperator :: Parser Cpt
+pCptAnyOperator = Operator . fromJust . operatorFromStr <$> (pStrings operators <* pManyWhitespace)
+
+pCptLiteral :: Parser Cpt
+pCptLiteral = Literal <$> pLiteral
 
 -- Faire une fonction qui crée l'abre correspondant à une expression en
 -- ajoutant les priorités.

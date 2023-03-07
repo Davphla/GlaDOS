@@ -28,7 +28,7 @@ instance Show Operator where
   show (Operator Mod _ _) = "%"
 
 operators :: [String]
-operators = [".", "+", "-", "*", "/", "`function`", "::", "->", "=", "$"]
+operators = [".", "+", "-", "*", "/", "`function`", "::", "->", "$"]
 
 operatorFromStr :: String -> Maybe Operator
 operatorFromStr "+" = Just $ Operator Plus 10 LeftAssociative

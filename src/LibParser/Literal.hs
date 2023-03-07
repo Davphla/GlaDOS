@@ -1,11 +1,11 @@
 {-
 -- EPITECH PROJECT, 2023
--- glados [WSL: Ubuntu-22.04]
+-- glados
 -- File description:
 -- Literal.hs
 -}
 
-module LibParser.Literal (pBool, pUInt, pInt, pFloat, pPair, pList, pLString, pLiteral) where
+module LibParser.Literal (pBool, pUInt, pInt, pFloat, pPair, pList, pLString, pLiteral, pLChar) where
 
 import LibParser.Parser
     (sChar,
@@ -13,9 +13,9 @@ import LibParser.Parser
       pAnySymbol,
       pParenthesis,
       pEncloseByParser,
-      pSymbol, Parser, pManyWhitespace, pEncloseBySpecificParser )
+      pSymbol, Parser, pManyWhitespace, pEncloseBySpecificParser, pAnyChar )
 import Control.Applicative ( Alternative((<|>), some, many) )
-import Cpt.Literal ( Literal(Array, Int, Float, Bool, String) )
+import Cpt.Literal ( Literal(Array, Int, Float, Bool, String, Char) )
 
 
 pBool :: Parser Bool
@@ -36,6 +36,9 @@ pPair p = pParenthesis ((,) <$> p <*> (sChar ',' *> p))
 pList :: Parser a -> Parser [a]
 pList p = pEncloseBySpecificParser (sChar '[') (sChar ']') ((:) <$> p <*> many (pManyWhitespace *> p))
 
+pLChar :: Parser Char
+pLChar = pEncloseByParser (sChar '\'') pAnyChar
+
 pLString :: Parser String
 pLString = pEncloseByParser (sChar '"') pAnySymbol
 
@@ -43,5 +46,6 @@ pLiteral :: Parser Literal
 pLiteral = (Int <$> pInt)
   <|> (Float <$> pFloat)
   <|> (Bool <$> pBool)
+  <|> (Char <$> pLChar)
   <|> (String <$> pLString)
   <|> (Array <$> pList pLiteral)

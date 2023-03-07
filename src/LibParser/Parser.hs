@@ -8,7 +8,7 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
 
-module LibParser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pAnySymbol, pEncloseBySpecificParser, pEncloseByParser, pSymbol, pSymbols, pComment, runParser, pWhitespace, pManyWhitespace, pSomeWhitespace, pWhitespaceWithNewLine, pAnd, pAndAnd, pParenthesis) where
+module LibParser.Parser (Parser, satisfy, skip, pEof, pChar, sChar, pChars, pString, pStrings, pAnySymbol, pEncloseBySpecificParser, pEncloseByParser, pSymbol, pSymbols, pComment, runParser, pWhitespace, pManyWhitespace, pSomeWhitespace, pWhitespaceWithNewLine, pAnd, pAndAnd, pParenthesis, pAnyChar) where
 import Control.Applicative ( Alternative(empty, (<|>), many, some) )
 import Data.List ( nub )
 import Control.Monad (void)
@@ -105,6 +105,9 @@ pManyWhitespace = void $ many pWhitespace
 
 pSomeWhitespace :: Parser ()
 pSomeWhitespace = void $ some pWhitespace
+
+pAnyChar :: Parser Char
+pAnyChar = pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
 
 pAnySymbol :: Parser String
 pAnySymbol = some $ pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'])
