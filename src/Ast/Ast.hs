@@ -4,6 +4,7 @@
 -- File description:
 -- Ast.hs
 -}
+{-# LANGUAGE LambdaCase #-}
 
 module Ast.Ast (
   Ast (Define, Value, Lambda, Call, Operation, Condition),
@@ -94,8 +95,12 @@ expressionToAst [Cpt.Cpt.Lambda l] = lambdaToAst l
 expressionToAst _ = Left [Warning $ NotImplemented "conditions"]
 
 assignementToAst :: Assignement -> Either [GladosError] Ast
+assignementToAst (s, [], Cpt.Cpt.Expression expr) = expressionToAst expr >>= (Right . Define s)
 assignementToAst (s, l, Cpt.Cpt.Expression expr) = listToParams l >>=
   (\args -> expressionToAst expr >>= (Right . Define s . Ast.Ast.Lambda args))
+assignementToAst (s, [], Cpt.Cpt.Operation op) = expressionToAst [Cpt.Cpt.Operation op] >>= (Right . Define s)
+assignementToAst (s, l, Cpt.Cpt.Operation op) = listToParams l >>=
+  (\args -> expressionToAst [Cpt.Cpt.Operation op] >>= (Right . Define s . Ast.Ast.Lambda args))
 assignementToAst c = Left [Cpt $ InvalidCpt InvalidCptNotTreatable $ show c]
 
 cptToAst :: Cpt -> Either [GladosError] Ast
