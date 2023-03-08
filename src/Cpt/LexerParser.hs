@@ -8,9 +8,10 @@
 module Cpt.LexerParser (pCpt, startLexer, pPrototype, pAssignement, pLambda, pCondition, pOperation, pExpression, pIdentifier, pParameter) where
 import LibParser.Parser
     (pEof,
-      Parser(..), pWhitespaceWithNewLine, pAndAnd, pParenthesis, pAnd, pManyWhitespace, pChars, sChar)
+      Parser(..), pAndAnd, pParenthesis, pAnd, pManyWhitespace, pChars, sChar, pWhitespaceWithNewLine, pComment)
 import Cpt.Cpt ( Cpt(Condition, Operation, Prototype, Assignement, Identifier), pCptKeyword, pCptLiteral, pCptAnyOperator, pCptOperator )
 import Control.Applicative ( Alternative((<|>), some, many) )
+
 
 pIdentifier :: Parser String
 pIdentifier = (:) <$> pChars (['a'..'z'] ++ ['A'..'Z']) <*> many (pChars (['a'..'z'] ++ ['A'..'Z'] ++ ['0'..'9'] ++ ['_']))
@@ -37,13 +38,13 @@ pExpression :: Parser Cpt
 pExpression = pKeywordExpression <|> pOperation
 
 pPrototype :: Parser Cpt
-pPrototype = Prototype <$> pAnd (pIdentifier <* (pManyWhitespace >> pCptOperator "::")) (some (((pIdentifier <* pManyWhitespace <* pCptOperator "->") <|> pIdentifier) <* pManyWhitespace))
+pPrototype = Prototype <$> pAnd (pIdentifier <* (pManyWhitespace >> pCptOperator "::")) (some ((pIdentifier <* pManyWhitespace <* pCptOperator "->") <|> pIdentifier))
 
 pAssignement :: Parser Cpt
 pAssignement = Assignement <$> pAndAnd (pIdentifier <* pManyWhitespace) (many pParameter <|> pure []) (sChar '=' >> pManyWhitespace *> pExpression)
 
 pCpt :: Parser Cpt
-pCpt = (pAssignement <|> pPrototype) <* pWhitespaceWithNewLine
+pCpt = (pAssignement <|> pPrototype) <* many (pWhitespaceWithNewLine <|> pComment)
 
 startLexer :: Parser [Cpt]
 startLexer = some pCpt <* pEof

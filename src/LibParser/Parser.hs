@@ -128,7 +128,7 @@ pSymbols :: [String] -> Parser String
 pSymbols = foldr1 (<|>) . fmap pSymbol
 
 pComment :: Parser ()
-pComment = void $ pString "--" *> many (satisfy (/= '\n')) <* (void (pChar '\n') <|> pEof)
+pComment = void $ pString "--" *> many (void (void (satisfy (/= '\n')) <|> pEof) ) <* (void (pChar '\n') <|> pEof)
 
 pAnd :: Parser a -> Parser b -> Parser (a, b)
 pAnd p1 p2 = (,) <$> p1 <*> p2
