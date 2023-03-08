@@ -9,15 +9,27 @@ module CptToAst (cptToAstTestList) where
 
 import Test.HUnit
 
-import Ast (
-    Ast (Operator, Value, Call, Define, Function),
-    Operator (Plus, Minus, Times, Div),
+import Ast.Ast (
+    Ast (Condition, Operation, Value, Call, Define, Lambda),
     cptToAst,
+    expressionToAst,
   )
-import Cpt (
-    Cpt (Literal, Symbol, List),
+import Cpt.Cpt (
+    Cpt (Expression, Lambda, Literal, Identifier, Operation, Prototype),
+    Condition,
+    Prototype
   )
-import Literal (Literal (Integer, Inexact, Floating, Boolean))
+import Cpt.Literal (Literal (Int, Float, Bool))
+import Cpt.Operator (Operator (..), OperatorType (Plus, Minus, Times, Div))
+import Cpt.LexerParser (pCpt, pExpression)
+import Error (
+  GlobalWarning (..),
+  CptError (..),
+  GladosError (..),
+  CptErrorReason (InvalidCptNotTreatable)
+  )
+import LibParser.Parser (runParser)
+import GHC.Generics (Associativity (LeftAssociative))
 
 
 -- -------------------------------------------------------------------------- --
@@ -26,73 +38,37 @@ import Literal (Literal (Integer, Inexact, Floating, Boolean))
 
 cptToAstTestList :: Test
 cptToAstTestList = TestList [
-    simpleAdd, simpleMinus, simpleDivide, simpleTimes, simpleSymbol, simpleInteger, 
-    simpleInexact, simpleFloating, simpleBoolean, simpleDefine, defineFunction, defineNothing,
-    defineLambda, callTest
+    simpleAssignment,
+    wrongCptType, prototypeCpt,
+    defineFunction, defineLambda, lambdaCreation
   ]
 
 -- -------------------------------------------------------------------------- --
 --                                Simple tests                                --
 -- -------------------------------------------------------------------------- --
 
-simpleAdd :: Test
-simpleAdd = TestCase (assertEqual "For Cpt < + 4 5 >"
-    (Just (Operator Plus [Value (Integer 4), Value (Integer 5)]))
-    (cptToAst (List [Symbol "+", Literal (Integer 4), Literal (Integer 5)]))
+simpleAssignment :: Test
+simpleAssignment = TestCase (assertEqual "For assignment toto = 1 + 1"
+    (Right (Ast.Ast.Define "toto" (Ast.Ast.Operation (Cpt.Operator.Operator Plus 10 LeftAssociative) [Ast.Ast.Value (Int 1), Ast.Ast.Value (Int 1)])))
+    (runParser pCpt "toto = 1 + 1" >>= (cptToAst . fst))
   )
 
-simpleMinus :: Test
-simpleMinus = TestCase (assertEqual "For Cpt < - 4 5 >"
-    (Just (Operator Minus [Value (Integer 4), Value (Integer 5)]))
-    (cptToAst (List [Symbol "-", Literal (Integer 4), Literal (Integer 5)]))
+-- conditionalAssignment :: Test
+-- conditionalAssignment = TestCase (assertEqual "For assignment toto = if 1 then 2 else 3"
+    -- (Right (Ast.Ast.Define "toto" (Ast.Ast.Condition (Ast.Ast.Value (Int 1)) (Ast.Ast.Value (Int 2)) (Ast.Ast.Value (Int 3)))))
+    -- (runParser pCpt "toto = if 1 then 2 else 3" >>= (cptToAst . fst))
+  -- )
+
+wrongCptType :: Test
+wrongCptType = TestCase (assertEqual "For a cpt not assignment or prototype"
+    (Left [Cpt $ InvalidCpt InvalidCptNotTreatable $ show (Cpt.Cpt.Literal (Int 1))])
+    (cptToAst (Cpt.Cpt.Literal (Int 1)))
   )
 
-simpleTimes :: Test
-simpleTimes = TestCase (assertEqual "For Cpt < * 4 5 >"
-    (Just (Operator Times [Value (Integer 4), Value (Integer 5)]))
-    (cptToAst (List [Symbol "*", Literal (Integer 4), Literal (Integer 5)]))
-  )
-
-simpleDivide :: Test
-simpleDivide = TestCase (assertEqual "For Cpt < / 4 5 >"
-    (Just (Operator Div [Value (Integer 4), Value (Integer 5)]))
-    (cptToAst (List [Symbol "/", Literal (Integer 4), Literal (Integer 5)]))
-  )
-
-simpleSymbol :: Test
-simpleSymbol = TestCase (assertEqual "For Cpt Symbol x"
-    (Just (Call "x" []))
-    (cptToAst (Symbol "x"))
-  )
-
-simpleInteger :: Test
-simpleInteger = TestCase (assertEqual "For Cpt Literal Integer 5"
-    (Just (Value (Integer 5)))
-    (cptToAst (Literal (Integer 5)))
-  )
-
-simpleInexact :: Test
-simpleInexact = TestCase (assertEqual "For Cpt Literal Inexact 5 4"
-    (Just (Value (Inexact 5 4)))
-    (cptToAst (Literal (Inexact 5 4)))
-  )
-
-simpleFloating :: Test
-simpleFloating = TestCase (assertEqual "For Cpt Literal Floating 5.4"
-    (Just (Value (Floating 5.4)))
-    (cptToAst (Literal (Floating 5.4)))
-  )
-
-simpleBoolean :: Test
-simpleBoolean = TestCase (assertEqual "For Cpt Literal Boolean True"
-    (Just (Value (Boolean True)))
-    (cptToAst (Literal (Boolean True)))
-  )
-
-simpleDefine :: Test
-simpleDefine = TestCase (assertEqual "For Cpt define x 5"
-    (Just (Define "x" (Value (Integer 4))))
-    (cptToAst (List [Symbol "define", Symbol "x", Literal (Integer 4)]))  
+prototypeCpt :: Test
+prototypeCpt = TestCase (assertEqual "Prototype in cptToAst"
+    (Left [Warning $ NotImplemented "function prototypes"])
+    (cptToAst (Cpt.Cpt.Prototype ("Marvin", ["Le", "BG"])))
   )
 
 -- -------------------------------------------------------------------------- --
@@ -100,29 +76,25 @@ simpleDefine = TestCase (assertEqual "For Cpt define x 5"
 -- -------------------------------------------------------------------------- --
 
 defineFunction :: Test
-defineFunction = TestCase (assertEqual "For Cpt define x 5"
-    (Just (Define "f" (Function ["a", "b"] (Operator Plus [Call "a" [], Call "b" []]))))
-    (cptToAst (List [Symbol "define", List [Symbol "f", Symbol "a", Symbol "b"], List [Symbol "+", Symbol "a", Symbol "b"]]))  
-  )
-
-defineNothing :: Test
-defineNothing = TestCase (assertEqual "For Define Nothing"
-    Nothing
-    (cptToAst (List [Symbol "define"]))  
+defineFunction = TestCase (assertEqual "For toto a = a + 5"
+    (Right (Define "toto" (Ast.Ast.Lambda ["a"] (Ast.Ast.Operation (Cpt.Operator.Operator Plus 10 LeftAssociative) [Value (Int 1), Value (Int 5)]))))
+    (runParser pCpt "toto a = 1 + 5" >>= (cptToAst . fst))
   )
 
 defineLambda :: Test
 defineLambda = TestCase (assertEqual "For define lambda + a b"
-    (Just (Define "f" (Function ["a", "b"] (Operator Plus [Call "a" [], Call "b" []]))))
-    (cptToAst (List [Symbol "lambda", List [Symbol "a", Symbol "b"], List [Symbol "+", Symbol "a", Symbol "b"]]))
+    (Left [Cpt $ InvalidCpt InvalidCptNotTreatable $ show (Cpt.Cpt.Operation [Identifier "lambda", Cpt.Cpt.Operation [Identifier "a", Identifier "b"], Cpt.Cpt.Operation [Identifier "+", Identifier "a", Identifier "b"]])])
+    (cptToAst (Cpt.Cpt.Operation [Identifier "lambda", Cpt.Cpt.Operation [Identifier "a", Identifier "b"], Cpt.Cpt.Operation [Identifier "+", Identifier "a", Identifier "b"]]))
   )
 
--- -------------------------------------------------------------------------- --
---                                 Call tests                                 --
--- -------------------------------------------------------------------------- --
-
-callTest :: Test
-callTest = TestCase (assertEqual "For call list [f a]"
-    (Just (Call "f" [Call "a" []]))
-    (cptToAst (List [Symbol "f", Symbol "a"]))
+lambdaCreation :: Test
+lambdaCreation = TestCase (assertEqual "Simple lambda test"
+    (Left [Warning $ NotImplemented "lambdas"])
+    (expressionToAst [
+      Cpt.Cpt.Lambda [
+        Cpt.Cpt.Identifier "a", Cpt.Cpt.Identifier "b", 
+        (Cpt.Cpt.Operation [
+          Cpt.Cpt.Identifier "+", Cpt.Cpt.Identifier "a", Cpt.Cpt.Identifier "b"]
+        )
+    ]])
   )

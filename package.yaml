@@ -22,6 +22,11 @@ description: This is an Epitech project.
 dependencies:
   - base >= 4.7 && < 5
   - containers
+  - llvm-hs
+  - llvm-hs-pure
+  - bytestring
+  - mtl
+  - ghc
 
 ghc-options:
   - -Wall
@@ -35,7 +40,8 @@ ghc-options:
   - -Wredundant-constraints
 
 library:
-  source-dirs: src
+  source-dirs:
+    - src
 
 executables:
   glados-exe:
@@ -56,7 +62,6 @@ tests:
       - tests/ast
       - tests/cpt
       - tests/lexer
-      - tests/evaluation
       - tests/literal
     ghc-options:
       - -threaded

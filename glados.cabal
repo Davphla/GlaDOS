@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.0.
+-- This file has been generated from package.yaml by hpack version 0.35.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -24,11 +24,17 @@ source-repository head
 
 library
   exposed-modules:
-      Ast
-      Cpt
-      Evaluation
-      Lexer
-      Literal
+      Ast.Ast
+      Ast.ShuntingYard
+      Cpt.Cpt
+      Cpt.Keyword
+      Cpt.LexerParser
+      Cpt.Literal
+      Cpt.Operator
+      Error
+      LibParser.Literal
+      LibParser.Parser
+      Llvm.Llvm
   other-modules:
       Paths_glados
   hs-source-dirs:
@@ -36,7 +42,12 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
+    , ghc
+    , llvm-hs
+    , llvm-hs-pure
+    , mtl
   default-language: Haskell2010
 
 executable glados-exe
@@ -48,20 +59,25 @@ executable glados-exe
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.7 && <5
+    , bytestring
     , containers
+    , ghc
     , glados
+    , llvm-hs
+    , llvm-hs-pure
+    , mtl
   default-language: Haskell2010
 
 test-suite glados-test
   type: exitcode-stdio-1.0
   main-is: Spec.hs
   other-modules:
-      AstTests
       CptToAst
+      ShuntingYardTests
+      CptKeyWord
+      CptOperator
       CptTests
       LexerTests
-      EvaluationOperatorTests
-      EvaluationTests
       LiteralTests
       Paths_glados
   hs-source-dirs:
@@ -69,12 +85,16 @@ test-suite glados-test
       tests/ast
       tests/cpt
       tests/lexer
-      tests/evaluation
       tests/literal
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       HUnit
     , base >=4.7 && <5
+    , bytestring
     , containers
+    , ghc
     , glados
+    , llvm-hs
+    , llvm-hs-pure
+    , mtl
   default-language: Haskell2010

@@ -9,19 +9,20 @@ import Test.HUnit
 
 import System.Exit (exitWith, exitSuccess, ExitCode (ExitFailure))
 
-import AstTests (astTestList)
 import CptToAst (cptToAstTestList)
 import CptTests (cptTestList)
 import LexerTests (lexerTestList)
-import EvaluationOperatorTests (operatorTestList)
-import EvaluationTests (evaluationTestList)
 import LiteralTests (literalTestList)
+import CptOperator (cptOperatorTestList)
+import CptKeyWord (cptKeywordTestList)
+import ShuntingYardTests (shuntingYardTestList)
 
 
 main :: IO ()
 main = runTestTT ( test [
-    cptToAstTestList, cptTestList, astTestList, evaluationTestList,
-    operatorTestList, literalTestList, lexerTestList
+    cptToAstTestList, cptTestList,
+    literalTestList, lexerTestList, cptOperatorTestList, 
+    cptKeywordTestList, shuntingYardTestList
   ]) >>= (\x -> if errors x + failures x == 0
     then  exitSuccess
     else exitWith (ExitFailure 84))
