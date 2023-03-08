@@ -78,7 +78,7 @@ getLiteralList = TestCase (assertEqual "For getLiteral list"
 
 getExpressionList :: Test
 getExpressionList = TestCase (assertEqual "For getExpression [\"s\"]"
-    (Right [Identifier "s"])
+    (Left [Cpt $ InvalidCpt InvalidCptNotExpression $ show (Operation [Identifier "s"])])
     (getExpression (Operation [Identifier "s"]))
     )
 

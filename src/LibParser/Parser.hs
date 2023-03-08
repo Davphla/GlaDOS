@@ -51,7 +51,7 @@ instance Monad Parser where
 
 instance Alternative Parser where
   empty :: Parser a
-  empty = LibParser.Parser.Parser $ \_ -> Left [Error.Parser InvalidSynthax]
+  empty = LibParser.Parser.Parser $ \_ -> Left [Error.Parser InvalidSyntax]
 
   (<|>) :: Parser a -> Parser a -> Parser a
   LibParser.Parser.Parser l <|> LibParser.Parser.Parser r = LibParser.Parser.Parser $ \input ->
@@ -69,7 +69,7 @@ satisfy f = LibParser.Parser.Parser $ \case
     [] -> Left [Error.Parser UnexpectedEnd]
     x:xs
       | f x -> Right (x,xs)
-      | otherwise -> Left [Error.Parser InvalidSynthax]
+      | otherwise -> Left [Error.Parser InvalidSyntax]
 
 skip :: (Char -> Bool) -> Parser ()
 skip f = void $ satisfy f

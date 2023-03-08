@@ -1,4 +1,4 @@
-module Ast.ShuntingYard (shuntingYard) where
+module Ast.ShuntingYard (shuntingYard, associativity) where
 
 import Cpt.Cpt (Cpt (Literal, Operation, Operator))
 import Cpt.Operator (Operator (..))

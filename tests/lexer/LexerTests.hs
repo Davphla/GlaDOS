@@ -2,8 +2,11 @@ module LexerTests (lexerTestList) where
 import Test.HUnit
 import Cpt.LexerParser
 import LibParser.Parser
-import Cpt.Cpt ( Cpt(Assignement, Operation, Literal, Prototype, Identifier, Condition) )
+import Cpt.Cpt (
+    Cpt(Assignement, Operation, Literal, Prototype, Identifier, Condition)
+  )
 import Cpt.Literal (Literal(..))
+import Error (GladosError (Parser), ParseError (InvalidSyntax))
 
 
 -- -------------------------------------------------------------------------- --
@@ -54,7 +57,7 @@ testIdentifier = TestCase (assertEqual "Correct identifier"
 
 testWrongIdentifier :: Test
 testWrongIdentifier = TestCase (assertEqual "Wrong identifier"
-    (Left [])
+    (Left [Parser InvalidSyntax])
     (runParser pIdentifier  "1")
     )
 

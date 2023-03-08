@@ -63,7 +63,7 @@ instance Show CptError where
 
 -- ------------------------------ Parse errors ------------------------------ --
 
-data ParseError = InvalidSynthax
+data ParseError = InvalidSyntax
   | Unexpected
   | UnexpectedEnd
   deriving (Eq, Show)

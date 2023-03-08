@@ -11,6 +11,7 @@ module Cpt.Cpt (
     Condition,
     Expression,
     Operation,
+    Prototype,
     Lambda,
     getIdentifier, getKeyword, getLiteral, getExpression, getOperator, pCptKeyword, pCptOperator, pCptAnyOperator, pCptLiteral, Identifier
   ) where
