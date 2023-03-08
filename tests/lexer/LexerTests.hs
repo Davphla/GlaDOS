@@ -76,6 +76,6 @@ testOperation = TestCase (assertEqual "Correct operation"
 
 testCondition :: Test
 testCondition = TestCase (assertEqual "Correct condition"
-    (Right (Condition (Literal 1,Literal 1,Literal 1),""))
+    (Right (Condition (Literal (Int 1),Literal (Int 1),Literal (Int 1)),""))
     (runParser pCondition "if 1 then 1 else 1")
     )
