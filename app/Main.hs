@@ -6,20 +6,21 @@
 -}
 
 module Main (main) where
+import Llvm.Llvm (compileModuleToObj)
 import Cpt.LexerParser (startLexer)
 import LibParser.Parser (Parser(..))
 import System.Exit (exitSuccess)
 import Ast.Ast (cptToAst)
 
 
-interpreteInput :: String -> String
+interpreteInput :: String -> IO ()
 interpreteInput str = case runParser startLexer str >>= (\(x, _) -> mapM cptToAst x) of
-  Left err -> show err
-  Right ast -> show ast -- TODO: add compilation here using the ast variable, which is a [Ast]
+  Left err -> print err
+  Right ast -> compileModuleToObj ast
 
 launchCmd :: String -> IO ()
 launchCmd "quit" = exitSuccess
-launchCmd str = putStrLn (interpreteInput str)
+launchCmd str = interpreteInput str
 
 loop :: IO ()
 loop = getLine >>= \line -> launchCmd line >> loop
