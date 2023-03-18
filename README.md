@@ -33,3 +33,5 @@ Clean temporary files and binary :
 ```shell
 make fclean
 ```
+
+The documentation is available at : https://glados-3.gitbook.io/untitled/
