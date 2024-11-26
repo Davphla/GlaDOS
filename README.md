@@ -35,3 +35,9 @@ make fclean
 ```
 
 The documentation is available at : https://glados-3.gitbook.io/untitled/
+
+# TODO
+- Fix README
+- Fix compiler for LLVM / Do an interpreter (probs what will be done)
+- Add workflows
+- Enjoy 
